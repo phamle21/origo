@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 40" role="img" aria-label="Origo">
+  <g transform="scale(1.25)">
+    <rect width="32" height="32" rx="8" fill="#0f766e"/>
+    <circle cx="14.5" cy="17.5" r="8" fill="none" stroke="#ffffff" stroke-width="3.5"/>
+    <circle cx="23.5" cy="8.5" r="5.75" fill="#0f766e"/>
+    <circle cx="23.5" cy="8.5" r="4" fill="#fbbf24"/>
+  </g>
+  <text x="50" y="30" font-family="'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif" font-size="29" font-weight="700" letter-spacing="-0.6" fill="#14171c">Origo</text>
+</svg>

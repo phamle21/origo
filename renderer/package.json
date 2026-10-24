@@ -1,0 +1,17 @@
+{
+  "name": "origo-renderer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Renders uploaded HTML or a public URL to a PNG screenshot for the Origo screen map.",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "playwright": "1.55.0"
+  }
+}

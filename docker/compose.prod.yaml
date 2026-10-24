@@ -1,0 +1,107 @@
+name: origo
+
+# Production template: runs the released images from GHCR and builds nothing.
+#   cp .env.prod.example .env.prod          # fill in every empty value
+#   docker compose -f compose.prod.yaml --env-file .env.prod up -d
+#   docker compose -f compose.prod.yaml --env-file .env.prod exec api php artisan origo:install
+# Put a reverse proxy with HTTPS in front of the web (WEB_PORT) and API (API_PORT) ports.
+
+x-api-common: &api-common
+  image: ghcr.io/phamle21/origo-api:${ORIGO_VERSION:-latest}
+  env_file: .env.prod
+  environment: &api-environment
+    DB_CONNECTION: pgsql
+    DB_HOST: postgres
+    DB_PORT: "5432"
+    REDIS_HOST: redis
+    REDIS_PORT: "6379"
+    RENDERER_URL: http://renderer:3000
+    # Only the api service may migrate on start; see below.
+    AUTO_MIGRATE: "false"
+  volumes:
+    # Uploaded screens and HTML sources; keep this volume backed up.
+    - api-storage:/app/storage/app
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_started
+  restart: unless-stopped
+
+services:
+  api:
+    <<: *api-common
+    environment:
+      <<: *api-environment
+      AUTO_MIGRATE: ${AUTO_MIGRATE:-false}
+    ports:
+      - "${API_PORT:-8000}:80"
+    networks: [default, renderer]
+
+  queue:
+    <<: *api-common
+    command: php artisan queue:work --tries=3
+    healthcheck:
+      disable: true
+
+  scheduler:
+    <<: *api-common
+    command: php artisan schedule:work
+    healthcheck:
+      disable: true
+
+  web:
+    image: ghcr.io/phamle21/origo-web:${ORIGO_VERSION:-latest}
+    environment:
+      NUXT_API_BASE_URL: http://api
+      NUXT_PUBLIC_APP_NAME: ${APP_NAME:-Origo}
+      NUXT_ERROR_NOTIFY_ENABLED: ${NUXT_ERROR_NOTIFY_ENABLED:-false}
+      NUXT_ERROR_NOTIFY_GOOGLE_CHAT_ENABLED: ${NUXT_ERROR_NOTIFY_GOOGLE_CHAT_ENABLED:-false}
+      NUXT_ERROR_NOTIFY_GOOGLE_CHAT_WEBHOOK_URL: ${NUXT_ERROR_NOTIFY_GOOGLE_CHAT_WEBHOOK_URL:-}
+      NUXT_ERROR_NOTIFY_SLACK_ENABLED: ${NUXT_ERROR_NOTIFY_SLACK_ENABLED:-false}
+      NUXT_ERROR_NOTIFY_SLACK_WEBHOOK_URL: ${NUXT_ERROR_NOTIFY_SLACK_WEBHOOK_URL:-}
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # Screenshot service, alone on its own network: only the API can reach it.
+  renderer:
+    image: ghcr.io/phamle21/origo-renderer:${ORIGO_VERSION:-latest}
+    init: true
+    shm_size: 1gb
+    environment:
+      ALLOWED_PRIVATE_HOSTS: ${RENDERER_ALLOWED_PRIVATE_HOSTS:-}
+    networks: [renderer]
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-origo}
+      POSTGRES_USER: ${DB_USERNAME:-origo}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env.prod}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-origo} -d ${DB_DATABASE:-origo}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+
+networks:
+  renderer: {}
+
+volumes:
+  api-storage:
+  postgres-data:
+  redis-data:

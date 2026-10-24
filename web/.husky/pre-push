@@ -1,0 +1,7 @@
+echo "Running the local pre-push verification..."
+yarn verify:quick || {
+  echo "Pre-push verification failed."
+  exit 1
+}
+
+echo "Pre-push verification passed."

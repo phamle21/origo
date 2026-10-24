@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" font-family="Be Vietnam Pro, Arial, sans-serif"><rect width="1200" height="760" fill="#f5f6f8"/><rect width="1200" height="60" fill="#fff"/><line x1="0" y1="60" x2="1200" y2="60" stroke="#e3e6eb"/><circle cx="56" cy="30" r="11" fill="none" stroke="#0f766e" stroke-width="3"/><text x="78" y="36" font-size="18" font-weight="700" fill="#14171c">Học Online</text><text x="820" y="35" font-size="14" fill="#535b68">Khóa học</text><text x="910" y="35" font-size="14" fill="#535b68">Khóa của tôi</text><rect x="1030" y="16" width="120" height="28" rx="14" fill="#f5f6f8" stroke="#e3e6eb"/><text x="1062" y="35" font-size="13" fill="#14171c">Giỏ hàng (1)</text>
+<rect x="50" y="98" width="632" height="320" rx="14" fill="#fff" stroke="#e3e6eb"/>
+<rect x="66" y="114" width="280" height="180" rx="10" fill="#dfe7ec"/><path d="M150 240l40-50 30 35 22-25 44 40z" fill="#b9c8d1"/><circle cx="290" cy="160" r="16" fill="#b9c8d1"/>
+<text x="366" y="142" font-size="22" font-weight="700" fill="#14171c">Tiếng Anh giao tiếp</text><text x="366" y="170" font-size="22" font-weight="700" fill="#14171c">cơ bản</text>
+<text x="366" y="204" font-size="14" fill="#535b68">Luyện nghe nói qua 24 tình huống</text><text x="366" y="226" font-size="14" fill="#535b68">thường gặp trong công việc.</text>
+<text x="366" y="270" font-size="13" fill="#535b68">★ 4,8 · 1.240 học viên</text>
+<text x="66" y="334" font-size="15" font-weight="600" fill="#14171c">Bạn sẽ học được gì</text>
+<text x="66" y="362" font-size="13" fill="#535b68">• Tự giới thiệu và hỏi đáp trong cuộc họp</text><text x="66" y="386" font-size="13" fill="#535b68">• Viết email ngắn, rõ ý</text>
+<rect x="740" y="98" width="412" height="108" rx="14" fill="#fff" stroke="#e3e6eb"/>
+<text x="762" y="146" font-size="30" font-weight="700" fill="#0b5a54">1.290.000 đ</text><text x="980" y="146" font-size="16" fill="#8c93a0" text-decoration="line-through">1.890.000 đ</text>
+<text x="762" y="180" font-size="13" fill="#535b68">Đã gồm thuế · Giảm 32% đến hết 31/10</text>
+<rect x="740" y="242" width="412" height="62" rx="12" fill="#0f766e"/><text x="946" y="280" font-size="17" font-weight="600" fill="#fff" text-anchor="middle">Thêm vào giỏ</text>
+<rect x="740" y="340" width="412" height="62" rx="12" fill="#fff" stroke="#0f766e" stroke-width="2"/><text x="946" y="378" font-size="17" font-weight="600" fill="#0f766e" text-anchor="middle">Học thử bài đầu tiên</text>
+<rect x="740" y="440" width="412" height="120" rx="14" fill="#fff" stroke="#e3e6eb"/><text x="762" y="472" font-size="14" font-weight="600" fill="#14171c">Khóa học gồm</text>
+<text x="762" y="500" font-size="13" fill="#535b68">24 bài học · 8 giờ video</text><text x="762" y="524" font-size="13" fill="#535b68">Học trên điện thoại và máy tính</text>
+<rect x="50" y="462" width="632" height="254" rx="14" fill="#fff" stroke="#e3e6eb"/><text x="66" y="494" font-size="15" font-weight="600" fill="#14171c">Nội dung khóa học</text>
+<g font-size="13" fill="#14171c"><rect x="66" y="510" width="600" height="44" rx="8" fill="#f5f6f8"/><text x="82" y="537">Chương 1 · Làm quen</text><text x="650" y="537" text-anchor="end" fill="#535b68">4 bài · 52 phút</text>
+<rect x="66" y="562" width="600" height="44" rx="8" fill="#f5f6f8"/><text x="82" y="589">Chương 2 · Gặp gỡ đồng nghiệp</text><text x="650" y="589" text-anchor="end" fill="#535b68">6 bài · 1 giờ 20 phút</text>
+<rect x="66" y="614" width="600" height="44" rx="8" fill="#f5f6f8"/><text x="82" y="641">Chương 3 · Cuộc họp đầu tiên</text><text x="650" y="641" text-anchor="end" fill="#535b68">6 bài · 1 giờ 35 phút</text>
+<rect x="66" y="666" width="600" height="38" rx="8" fill="#f5f6f8"/><text x="82" y="690" fill="#535b68">+ 2 chương nữa</text></g>
+</svg>

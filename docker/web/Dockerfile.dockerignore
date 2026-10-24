@@ -1,0 +1,18 @@
+# Context is ../web. Nothing local, secret or generated goes into the image.
+.env
+.env.*
+!.env.example
+node_modules
+.nuxt
+.output
+.yarn/cache
+.yarn/install-state.gz
+coverage
+storybook-static
+logs
+*.log
+AGENTS.md
+CLAUDE.md
+.ai
+.claude
+.git

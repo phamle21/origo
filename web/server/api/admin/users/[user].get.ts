@@ -1,0 +1,13 @@
+import { z } from 'zod';
+import { createOrigoApiClient } from '~~/server/integrations/origo-api/client';
+import { adminUserDtoSchema } from '~~/server/integrations/origo-api/dto/team.dto';
+import { userIdSchema } from '~~/server/utils/route-params';
+import type { AdminUser } from '~~/shared/contracts/member';
+
+const paramsSchema = z.object({ user: userIdSchema });
+
+export default defineApiHandler(async (event): Promise<AdminUser> => {
+  const { user } = await getValidatedRouterParams(event, (value) => paramsSchema.parse(value));
+
+  return adminUserDtoSchema.parse(await createOrigoApiClient(event)(`/admin/users/${user}`)).data;
+});

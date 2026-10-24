@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+@import './tokens.css';
+
+/* Plain CSS on purpose: Tailwind 4 entry and token files must never run through Sass, and `@apply` is
+ * not used anywhere in this project. */
+@layer base {
+  /*
+   * Everything that can be clicked shows the hand cursor; Tailwind 4 resets buttons to the plain arrow.
+   * This sits in the base layer, so a utility such as `cursor-grab` or `cursor-ew-resize` still wins.
+   */
+  a[href],
+  button,
+  summary,
+  select,
+  [role='button'],
+  [role='tab'],
+  [role='option'],
+  input[type='checkbox'],
+  input[type='radio'],
+  input[type='color'],
+  input[type='file'],
+  ::file-selector-button,
+  label:has(input:is([type='checkbox'], [type='radio'], [type='file'])) {
+    cursor: pointer;
+  }
+
+  /* Disabled controls say so instead of pretending to be clickable. */
+  :is(button, select, input, textarea):disabled,
+  [aria-disabled='true'],
+  label:has(input:is([type='checkbox'], [type='radio']):disabled) {
+    cursor: not-allowed;
+  }
+
+  body {
+    background-color: var(--app-color-surface-muted);
+    color: var(--app-color-content);
+    font-family: var(--app-font-sans);
+  }
+}

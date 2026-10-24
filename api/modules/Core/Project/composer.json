@@ -1,0 +1,20 @@
+{
+    "name": "origo/core-project",
+    "description": "Core: projects — the root every document, spec and test case belongs to.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Origo\\Core\\Project\\": "src/",
+            "Origo\\Core\\Project\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Origo\\Core\\Project\\ProjectServiceProvider"
+            ]
+        }
+    }
+}

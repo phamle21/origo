@@ -1,0 +1,146 @@
+name: origo
+
+# Development stack: runs from source with live reload, on localhost ports.
+# Run from this folder (not with -f, so a local compose.override.yaml is still picked up):
+#   cp .env.example .env && docker compose up -d --build
+#   docker compose exec api php artisan origo:install
+# Production uses compose.prod.yaml and the released images instead.
+
+x-api-common: &api-common
+  image: origo-api:dev
+  volumes:
+    - ../api:/app
+
+services:
+  api:
+    <<: *api-common
+    build:
+      context: ../api
+      dockerfile: ../docker/api/Dockerfile
+      target: dev
+      args:
+        PHP_VERSION: ${PHP_VERSION:-8.5}
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    container_name: origo-api
+    environment:
+      # Installs Composer packages, creates api/.env and the app key on first start.
+      ORIGO_DEV_BOOTSTRAP: "1"
+    ports:
+      - "${API_PORT:-8310}:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks: [default, renderer]
+
+  queue:
+    <<: *api-common
+    container_name: origo-queue
+    command: php artisan queue:work --tries=3
+    restart: unless-stopped
+    healthcheck:
+      disable: true
+    depends_on:
+      api:
+        condition: service_healthy
+
+  scheduler:
+    <<: *api-common
+    container_name: origo-scheduler
+    command: php artisan schedule:work
+    restart: unless-stopped
+    healthcheck:
+      disable: true
+    depends_on:
+      api:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ../web
+      dockerfile: ../docker/web/Dockerfile
+      target: dev
+      args:
+        NODE_VERSION: ${NODE_VERSION:-24.14.0}
+    image: origo-web:dev
+    container_name: origo-web
+    volumes:
+      - ../web:/app
+    environment:
+      # The browser only calls Nuxt; the Nuxt server calls Laravel over the Docker network.
+      NUXT_API_BASE_URL: http://origo-api
+      NUXT_PUBLIC_APP_NAME: Origo
+    ports:
+      - "${WEB_PORT:-3310}:3000"
+    depends_on:
+      - api
+
+  # Turns uploaded HTML or a public URL into a screenshot. Only the API can reach it: it sits alone on
+  # the `renderer` network, so a hostile page cannot reach the database or Redis either.
+  renderer:
+    build:
+      context: ../renderer
+      dockerfile: ../docker/renderer/Dockerfile
+      target: prod
+    image: origo-renderer:dev
+    container_name: origo-renderer
+    init: true
+    shm_size: 1gb
+    environment:
+      ALLOWED_PRIVATE_HOSTS: ${RENDERER_ALLOWED_PRIVATE_HOSTS:-}
+    networks: [renderer]
+    restart: unless-stopped
+
+  # Component states in Storybook. Start with `docker compose --profile review up -d storybook`.
+  storybook:
+    image: origo-web:dev
+    container_name: origo-storybook
+    command: yarn storybook --host 0.0.0.0 --no-open
+    volumes:
+      - ../web:/app
+    ports:
+      - "${STORYBOOK_PORT:-6306}:6006"
+    profiles: [review]
+
+  postgres:
+    image: postgres:${POSTGRES_VERSION:-18}-alpine
+    container_name: origo-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-origo}
+      POSTGRES_USER: ${POSTGRES_USER:-origo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-origo_local_only}
+    volumes:
+      # PostgreSQL 18+: mount /var/lib/postgresql, not .../data.
+      - postgres-data:/var/lib/postgresql
+    ports:
+      - "${POSTGRES_PORT:-5442}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-origo} -d ${POSTGRES_DB:-origo}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:8-alpine
+    container_name: origo-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    ports:
+      - "${REDIS_PORT:-6389}:6379"
+
+  # Catches every e-mail the app sends: http://localhost:8035
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: origo-mailpit
+    ports:
+      - "${MAILPIT_PORT:-8035}:8025"
+
+networks:
+  renderer: {}
+
+volumes:
+  postgres-data:
+  redis-data:

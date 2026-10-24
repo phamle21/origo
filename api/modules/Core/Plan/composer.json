@@ -1,0 +1,23 @@
+{
+    "name": "origo/core-plan",
+    "description": "Core: project planning — phases, modules and features against delivery stages, with dated tasks and links to the screen map.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "origo/core-project": "^1.0",
+        "origo/core-screen": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Origo\\Core\\Plan\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Origo\\Core\\Plan\\PlanServiceProvider"
+            ]
+        }
+    }
+}

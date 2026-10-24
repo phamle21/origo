@@ -1,0 +1,20 @@
+export default {
+  required: 'Vui lòng nhập ô này.',
+  tooLong: 'Tối đa {max} ký tự.',
+  tooShort: 'Cần ít nhất {min} ký tự.',
+  email: "Email chưa đúng định dạng, ví dụ ten{'@'}congty.vn.",
+  projectCode: 'Mã gồm 2–16 chữ hoặc số, bắt đầu bằng chữ (VD: LMS).',
+  mismatch: 'Hai mật khẩu chưa khớp nhau.',
+  sameAsCurrent: 'Mật khẩu mới phải khác mật khẩu hiện tại.',
+  endBeforeStart: 'Ngày kết thúc không được trước ngày bắt đầu.',
+  invalid: 'Giá trị chưa hợp lệ.',
+  server: {
+    taken: 'Giá trị này đã được dùng, hãy chọn giá trị khác.',
+    incorrect: 'Mật khẩu hiện tại không đúng.',
+    tooShort: 'Giá trị quá ngắn.',
+    tooLong: 'Giá trị quá dài.',
+    format: 'Giá trị chưa đúng định dạng.',
+    required: 'Vui lòng nhập ô này.',
+    invalid: 'Giá trị chưa hợp lệ.',
+  },
+};

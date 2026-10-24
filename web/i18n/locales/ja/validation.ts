@@ -1,0 +1,20 @@
+export default {
+  required: 'この項目を入力してください。',
+  tooLong: '{max}文字以内で入力してください。',
+  tooShort: '{min}文字以上必要です。',
+  email: "name{'@'}company.com の形式で入力してください。",
+  projectCode: '英字で始まる2〜16文字の英数字（例: LMS）。',
+  mismatch: 'パスワードが一致しません。',
+  sameAsCurrent: '新しいパスワードは現在のものと異なる必要があります。',
+  endBeforeStart: '終了日は開始日より前にできません。',
+  invalid: '値が正しくありません。',
+  server: {
+    taken: 'この値は既に使われています。',
+    incorrect: '現在のパスワードが正しくありません。',
+    tooShort: '値が短すぎます。',
+    tooLong: '値が長すぎます。',
+    format: '形式が正しくありません。',
+    required: 'この項目を入力してください。',
+    invalid: '値が正しくありません。',
+  },
+};

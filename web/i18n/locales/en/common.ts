@@ -1,0 +1,52 @@
+export default {
+  actions: {
+    save: 'Save',
+    cancel: 'Cancel',
+    retry: 'Retry',
+    send: 'Send',
+    confirm: 'Confirm',
+    saving: 'Saving…',
+    close: 'Close',
+  },
+  states: {
+    loading: 'Loading…',
+  },
+  notTranslated: 'Not translated yet',
+  unsaved: {
+    title: 'You have unsaved changes',
+    hint: 'Changes are only kept after you press Save.',
+    discard: 'Undo',
+    save: 'Save changes',
+    leaveTitle: 'Leave without saving?',
+    leaveDescription: 'Unsaved changes on this page will be lost.',
+    closeTitle: 'Close without saving?',
+    closeDescription: 'What you just entered will be lost.',
+    confirmDiscard: 'Discard changes',
+    keepEditing: 'Keep editing',
+  },
+  form: {
+    step: 'Step {number}:',
+    requiredNote: 'marks a required field',
+  },
+  localized: {
+    open: 'Other languages of “{label}”: {filled}/{total} filled in',
+    openHint: 'Type or translate into other languages',
+    otherError: 'Another language of this field is invalid — open 🌐 to fix it.',
+    dialogHint: 'The {language} box is the source. The others may stay empty, be typed, or be translated.',
+    translateHint: 'Machine translation from the source box (free; please read it over).',
+    translateEmpty: 'Translate empty boxes',
+    translate: 'Translate',
+    translateOne: 'Translate into {language}',
+    translating: 'Translating…',
+    translateFailed: 'Could not translate right now. Try again later or type it in.',
+    translatePartial: 'Some languages could not be translated; please type them in.',
+    source: 'Source',
+    done: 'Done',
+  },
+  colorPicker: {
+    custom: 'Other colour',
+  },
+  typeToConfirm: {
+    label: 'To confirm, type {phrase} in the box below:',
+  },
+};

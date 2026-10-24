@@ -1,0 +1,20 @@
+export default {
+  required: 'Please fill in this field.',
+  tooLong: 'At most {max} characters.',
+  tooShort: 'At least {min} characters.',
+  email: "Enter an email such as name{'@'}company.com.",
+  projectCode: '2–16 letters or digits, starting with a letter (e.g. LMS).',
+  mismatch: 'The two passwords do not match.',
+  sameAsCurrent: 'The new password must differ from the current one.',
+  endBeforeStart: 'The end date must not be before the start date.',
+  invalid: 'This value is not valid.',
+  server: {
+    taken: 'This value is already in use; choose another.',
+    incorrect: 'The current password is not correct.',
+    tooShort: 'This value is too short.',
+    tooLong: 'This value is too long.',
+    format: 'This value has the wrong format.',
+    required: 'Please fill in this field.',
+    invalid: 'This value is not valid.',
+  },
+};

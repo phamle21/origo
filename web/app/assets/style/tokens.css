@@ -1,0 +1,188 @@
+/*
+ * Design tokens. `--app-*` variables hold the palette, `@theme inline` exposes each one as a semantic
+ * Tailwind utility, and components only ever use the utility. `app/plugins/theme.ts`
+ * stamps `data-theme` (light, dark or system) on the root element; each theme is one
+ * `html[data-theme='<name>']` block of `--app-*` values here, and no component changes. The selector is
+ * qualified with `html` so it outranks this `:root` fallback whatever its position in the file.
+ *
+ * Status pairs (`*-soft` background, plain foreground) are chosen to keep text at 4.5:1 or better, and
+ * the `*-mark` fills used in charts also differ in lightness so they never rely on hue alone.
+ */
+:root {
+  --app-font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+  --app-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Page background: a clearly grey canvas so every white section stands out from it. */
+  --app-color-canvas: #d9dee5;
+  --app-color-surface: #ffffff;
+  --app-color-surface-muted: #f3f5f7;
+  --app-color-content: #14171c;
+  --app-color-content-muted: #535b68;
+  --app-color-line: #d8dde4;
+  --app-color-line-strong: #b8c0cb;
+  /* Between the white sections and the grey canvas, so the sticky action bar reads as chrome. */
+  --app-color-toolbar: #eceff3;
+  /* Rows that group others (phases, modules) in tables and the plan chart. */
+  --app-color-group: #e7ebf0;
+  --app-color-group-strong: #dbe1e8;
+
+  --app-color-accent: #0f766e;
+  --app-color-accent-strong: #0b5a54;
+  --app-color-accent-soft: #e3f3f0;
+  --app-color-accent-contrast: #ffffff;
+  /* The logo's marker colours, used only as accents inside illustrations and tile icons. */
+  --app-color-spark: #fbbf24;
+  --app-color-spark-strong: #f97316;
+  --app-color-tile: #e3f1ef;
+
+  --app-color-neutral: #3f4652;
+  --app-color-neutral-soft: #eef0f3;
+  --app-color-info: #1e46b8;
+  --app-color-info-soft: #e6eeff;
+  --app-color-warning: #8a5300;
+  --app-color-warning-soft: #fff4db;
+  --app-color-success: #1d6b2e;
+  --app-color-success-soft: #e5f6e8;
+  --app-color-danger: #a11d1d;
+  --app-color-danger-soft: #fdecec;
+
+  --app-color-success-mark: #2e8b47;
+  --app-color-danger-mark: #c2410c;
+  --app-color-warning-mark: #e0a82e;
+  --app-color-neutral-mark: #d5d9e0;
+
+  --app-shadow-card: 0 1px 2px rgb(16 24 40 / 0.08), 0 2px 6px rgb(16 24 40 / 0.06);
+
+  --app-radius-card: 1rem;
+  --app-radius-control: 0.625rem;
+}
+
+/*
+ * Dark theme. "dark" always applies it; "system" follows the device. The two selectors cannot share a
+ * rule across the media query, so the values are listed once in each. Status pairs keep 4.5:1 here too.
+ */
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --app-color-canvas: #0d1014;
+  --app-color-surface: #171b21;
+  --app-color-surface-muted: #1e232a;
+  --app-color-content: #e7eaee;
+  --app-color-content-muted: #9ca5b0;
+  --app-color-line: #2a3039;
+  --app-color-line-strong: #3b434e;
+  --app-color-toolbar: #12161b;
+  --app-color-group: #1d2229;
+  --app-color-group-strong: #242a32;
+
+  --app-color-accent: #2cc4b0;
+  --app-color-accent-strong: #6ee7d6;
+  --app-color-accent-soft: #10302c;
+  --app-color-accent-contrast: #04211e;
+  --app-color-tile: #11302c;
+
+  --app-color-neutral: #c4cbd4;
+  --app-color-neutral-soft: #262c34;
+  --app-color-info: #9db8ff;
+  --app-color-info-soft: #18244a;
+  --app-color-warning: #f3c56b;
+  --app-color-warning-soft: #33270f;
+  --app-color-success: #86dc9f;
+  --app-color-success-soft: #13301d;
+  --app-color-danger: #ff9f9f;
+  --app-color-danger-soft: #3b1818;
+
+  --app-color-success-mark: #3fb862;
+  --app-color-danger-mark: #f2703f;
+  --app-color-warning-mark: #e0a82e;
+  --app-color-neutral-mark: #4a525d;
+
+  --app-shadow-card: 0 1px 2px rgb(0 0 0 / 0.5), 0 2px 8px rgb(0 0 0 / 0.35);
+}
+
+html[data-theme='system'] {
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme='system'] {
+    --app-color-canvas: #0d1014;
+    --app-color-surface: #171b21;
+    --app-color-surface-muted: #1e232a;
+    --app-color-content: #e7eaee;
+    --app-color-content-muted: #9ca5b0;
+    --app-color-line: #2a3039;
+    --app-color-line-strong: #3b434e;
+    --app-color-toolbar: #12161b;
+    --app-color-group: #1d2229;
+    --app-color-group-strong: #242a32;
+
+    --app-color-accent: #2cc4b0;
+    --app-color-accent-strong: #6ee7d6;
+    --app-color-accent-soft: #10302c;
+    --app-color-accent-contrast: #04211e;
+    --app-color-tile: #11302c;
+
+    --app-color-neutral: #c4cbd4;
+    --app-color-neutral-soft: #262c34;
+    --app-color-info: #9db8ff;
+    --app-color-info-soft: #18244a;
+    --app-color-warning: #f3c56b;
+    --app-color-warning-soft: #33270f;
+    --app-color-success: #86dc9f;
+    --app-color-success-soft: #13301d;
+    --app-color-danger: #ff9f9f;
+    --app-color-danger-soft: #3b1818;
+
+    --app-color-success-mark: #3fb862;
+    --app-color-danger-mark: #f2703f;
+    --app-color-warning-mark: #e0a82e;
+    --app-color-neutral-mark: #4a525d;
+
+    --app-shadow-card: 0 1px 2px rgb(0 0 0 / 0.5), 0 2px 8px rgb(0 0 0 / 0.35);
+  }
+}
+
+@theme inline {
+  --font-sans: var(--app-font-sans);
+  --font-mono: var(--app-font-mono);
+
+  --color-canvas: var(--app-color-canvas);
+  --color-surface: var(--app-color-surface);
+  --color-surface-muted: var(--app-color-surface-muted);
+  --color-content: var(--app-color-content);
+  --color-content-muted: var(--app-color-content-muted);
+  --color-line: var(--app-color-line);
+  --color-line-strong: var(--app-color-line-strong);
+  --color-toolbar: var(--app-color-toolbar);
+  --color-group: var(--app-color-group);
+  --color-group-strong: var(--app-color-group-strong);
+
+  --color-accent: var(--app-color-accent);
+  --color-accent-strong: var(--app-color-accent-strong);
+  --color-accent-soft: var(--app-color-accent-soft);
+  --color-accent-contrast: var(--app-color-accent-contrast);
+  --color-spark: var(--app-color-spark);
+  --color-spark-strong: var(--app-color-spark-strong);
+  --color-tile: var(--app-color-tile);
+
+  --color-neutral: var(--app-color-neutral);
+  --color-neutral-soft: var(--app-color-neutral-soft);
+  --color-info: var(--app-color-info);
+  --color-info-soft: var(--app-color-info-soft);
+  --color-warning: var(--app-color-warning);
+  --color-warning-soft: var(--app-color-warning-soft);
+  --color-success: var(--app-color-success);
+  --color-success-soft: var(--app-color-success-soft);
+  --color-danger: var(--app-color-danger);
+  --color-danger-soft: var(--app-color-danger-soft);
+
+  --color-success-mark: var(--app-color-success-mark);
+  --color-danger-mark: var(--app-color-danger-mark);
+  --color-warning-mark: var(--app-color-warning-mark);
+  --color-neutral-mark: var(--app-color-neutral-mark);
+
+  --shadow-card: var(--app-shadow-card);
+
+  --radius-card: var(--app-radius-card);
+  --radius-control: var(--app-radius-control);
+}

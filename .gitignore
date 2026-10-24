@@ -1,0 +1,29 @@
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+docker/compose.override.yaml
+
+# Local data (databases, uploads)
+/local-data/
+
+# AI assistant notes and editor settings
+CLAUDE.md
+CLAUDE.local.md
+AGENTS.md
+.ai/
+.claude/
+.vscode/
+.idea/
+
+# Dependencies and build output
+api/vendor/
+web/node_modules/
+web/.nuxt/
+web/.output/
+renderer/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

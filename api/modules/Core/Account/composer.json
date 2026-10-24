@@ -1,0 +1,19 @@
+{
+    "name": "origo/core-account",
+    "description": "Core: user accounts managed by admins — create, update, deactivate, reset password.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Origo\\Core\\Account\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Origo\\Core\\Account\\AccountServiceProvider"
+            ]
+        }
+    }
+}

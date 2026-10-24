@@ -1,0 +1,23 @@
+{
+    "name": "origo/core-screen",
+    "description": "Core: screen map — screenshots with numbered points, their bilingual design content, concepts, dependencies and comments.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "require": {
+        "origo/core-project": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Origo\\Core\\Screen\\": "src/",
+            "Origo\\Core\\Screen\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Origo\\Core\\Screen\\ScreenServiceProvider"
+            ]
+        }
+    }
+}

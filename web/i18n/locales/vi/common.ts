@@ -1,0 +1,52 @@
+export default {
+  actions: {
+    save: 'Lưu',
+    cancel: 'Hủy',
+    retry: 'Thử lại',
+    send: 'Gửi',
+    confirm: 'Đồng ý',
+    saving: 'Đang lưu…',
+    close: 'Đóng',
+  },
+  states: {
+    loading: 'Đang tải…',
+  },
+  notTranslated: 'Chưa dịch',
+  unsaved: {
+    title: 'Bạn có thay đổi chưa lưu',
+    hint: 'Thay đổi chỉ được ghi lại sau khi bấm Lưu.',
+    discard: 'Hoàn tác',
+    save: 'Lưu thay đổi',
+    leaveTitle: 'Rời trang khi chưa lưu?',
+    leaveDescription: 'Các thay đổi chưa lưu trên trang này sẽ bị mất.',
+    closeTitle: 'Đóng khi chưa lưu?',
+    closeDescription: 'Nội dung bạn vừa nhập sẽ bị mất.',
+    confirmDiscard: 'Bỏ thay đổi',
+    keepEditing: 'Tiếp tục sửa',
+  },
+  form: {
+    step: 'Bước {number}:',
+    requiredNote: 'là ô bắt buộc',
+  },
+  localized: {
+    open: 'Các ngôn ngữ khác của “{label}”: đã nhập {filled}/{total}',
+    openHint: 'Nhập hoặc dịch sang ngôn ngữ khác',
+    otherError: 'Một ngôn ngữ khác của ô này đang sai — bấm nút 🌐 để sửa.',
+    dialogHint: 'Ô {language} là ô gốc. Các ô khác có thể để trống, tự gõ, hoặc bấm Dịch.',
+    translateHint: 'Dịch tự động từ ô gốc (miễn phí, nên đọc lại).',
+    translateEmpty: 'Dịch các ô còn trống',
+    translate: 'Dịch',
+    translateOne: 'Dịch sang {language}',
+    translating: 'Đang dịch…',
+    translateFailed: 'Chưa dịch được lúc này. Hãy thử lại sau hoặc tự gõ.',
+    translatePartial: 'Có ngôn ngữ chưa dịch được, hãy tự gõ ô đó.',
+    source: 'Gốc',
+    done: 'Xong',
+  },
+  colorPicker: {
+    custom: 'Màu khác',
+  },
+  typeToConfirm: {
+    label: 'Để xác nhận, hãy gõ {phrase} vào ô dưới đây:',
+  },
+};

@@ -1,0 +1,52 @@
+export default {
+  actions: {
+    save: '保存',
+    cancel: 'キャンセル',
+    retry: '再試行',
+    send: '送信',
+    confirm: 'OK',
+    saving: '保存中…',
+    close: '閉じる',
+  },
+  states: {
+    loading: '読み込み中…',
+  },
+  notTranslated: '未翻訳',
+  unsaved: {
+    title: '未保存の変更があります',
+    hint: '変更は「保存」を押すまで記録されません。',
+    discard: '元に戻す',
+    save: '変更を保存',
+    leaveTitle: '保存せずに移動しますか？',
+    leaveDescription: 'このページの未保存の変更は失われます。',
+    closeTitle: '保存せずに閉じますか？',
+    closeDescription: '入力した内容は失われます。',
+    confirmDiscard: '変更を破棄',
+    keepEditing: '編集を続ける',
+  },
+  form: {
+    step: 'ステップ{number}:',
+    requiredNote: 'は必須項目です',
+  },
+  localized: {
+    open: '「{label}」の他の言語：{filled}/{total} 入力済み',
+    openHint: '他の言語で入力または翻訳',
+    otherError: 'この項目の他の言語に誤りがあります。🌐 を開いて直してください。',
+    dialogHint: '{language} の欄が元の文です。他の欄は空欄・手入力・翻訳のいずれでも構いません。',
+    translateHint: '元の文から自動翻訳します（無料・確認をおすすめします）。',
+    translateEmpty: '空欄を翻訳',
+    translate: '翻訳',
+    translateOne: '{language} に翻訳',
+    translating: '翻訳中…',
+    translateFailed: '今は翻訳できません。後でもう一度試すか、手入力してください。',
+    translatePartial: '翻訳できなかった言語があります。手入力してください。',
+    source: '元の文',
+    done: '完了',
+  },
+  colorPicker: {
+    custom: 'その他の色',
+  },
+  typeToConfirm: {
+    label: '確認のため、下の欄に {phrase} と入力してください：',
+  },
+};

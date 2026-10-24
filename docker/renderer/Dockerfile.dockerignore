@@ -1,0 +1,5 @@
+# Context is ../renderer.
+node_modules
+.env
+.env.*
+.git

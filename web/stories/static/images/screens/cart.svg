@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" font-family="Be Vietnam Pro, Arial, sans-serif"><rect width="1200" height="760" fill="#f5f6f8"/><rect width="1200" height="60" fill="#fff"/><line x1="0" y1="60" x2="1200" y2="60" stroke="#e3e6eb"/><circle cx="56" cy="30" r="11" fill="none" stroke="#0f766e" stroke-width="3"/><text x="78" y="36" font-size="18" font-weight="700" fill="#14171c">Học Online</text><text x="820" y="35" font-size="14" fill="#535b68">Khóa học</text><text x="910" y="35" font-size="14" fill="#535b68">Khóa của tôi</text><rect x="1030" y="16" width="120" height="28" rx="14" fill="#f5f6f8" stroke="#e3e6eb"/><text x="1062" y="35" font-size="13" fill="#14171c">Giỏ hàng (1)</text>
+<text x="50" y="106" font-size="26" font-weight="700" fill="#14171c">Giỏ hàng</text>
+<rect x="50" y="130" width="680" height="180" rx="14" fill="#fff" stroke="#e3e6eb"/>
+<rect x="70" y="150" width="140" height="92" rx="8" fill="#dfe7ec"/>
+<text x="230" y="176" font-size="17" font-weight="600" fill="#14171c">Tiếng Anh giao tiếp cơ bản</text><text x="230" y="202" font-size="13" fill="#535b68">24 bài học · Truy cập trọn đời</text>
+<text x="710" y="176" font-size="18" font-weight="700" fill="#14171c" text-anchor="end">1.290.000 đ</text><text x="710" y="200" font-size="13" fill="#8c93a0" text-anchor="end" text-decoration="line-through">1.890.000 đ</text>
+<text x="230" y="234" font-size="13" fill="#a11d1d">Xóa khỏi giỏ</text>
+<line x1="70" y1="262" x2="710" y2="262" stroke="#eef0f3"/><text x="70" y="292" font-size="13" fill="#0f766e">← Tiếp tục xem khóa học</text>
+<rect x="788" y="130" width="362" height="136" rx="14" fill="#fff" stroke="#e3e6eb"/><text x="808" y="162" font-size="15" font-weight="600" fill="#14171c">Mã giảm giá</text>
+<rect x="808" y="178" width="214" height="46" rx="10" fill="#fff" stroke="#c9ced6"/><text x="822" y="207" font-size="14" fill="#14171c">THANG10</text>
+<rect x="1032" y="178" width="98" height="46" rx="10" fill="#14171c"/><text x="1081" y="207" font-size="14" font-weight="600" fill="#fff" text-anchor="middle">Áp dụng</text>
+<text x="808" y="250" font-size="12" fill="#1d6b2e">✓ Đã áp dụng: giảm 10%</text>
+<rect x="788" y="312" width="362" height="184" rx="14" fill="#fff" stroke="#e3e6eb"/>
+<g font-size="14"><text x="808" y="350" fill="#535b68">Tạm tính</text><text x="1130" y="350" fill="#14171c" text-anchor="end">1.290.000 đ</text>
+<text x="808" y="384" fill="#535b68">Giảm giá (THANG10)</text><text x="1130" y="384" fill="#1d6b2e" text-anchor="end">−129.000 đ</text></g>
+<line x1="808" y1="408" x2="1130" y2="408" stroke="#eef0f3"/><text x="808" y="446" font-size="16" font-weight="700" fill="#14171c">Tổng tiền</text><text x="1130" y="446" font-size="22" font-weight="700" fill="#0b5a54" text-anchor="end">1.161.000 đ</text>
+<text x="808" y="476" font-size="12" fill="#535b68">Đã gồm thuế</text>
+<rect x="788" y="540" width="362" height="70" rx="12" fill="#0f766e"/><text x="969" y="582" font-size="18" font-weight="600" fill="#fff" text-anchor="middle">Thanh toán</text>
+</svg>
