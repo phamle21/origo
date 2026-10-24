@@ -191,7 +191,7 @@ so nobody else can claim the first administrator account of a fresh server.
 
 </details>
 
-## 🛠️ Development
+## 💻 Development
 
 ```bash
 docker compose exec api php artisan test       # API tests
