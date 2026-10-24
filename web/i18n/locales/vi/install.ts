@@ -1,0 +1,17 @@
+export default {
+  title: 'Cài đặt Origo',
+  description: 'Lần chạy đầu tiên: Origo tạo các bảng dữ liệu và tài khoản quản trị đầu tiên.',
+  token: 'Mã cài đặt',
+  tokenHint: 'Giá trị INSTALL_TOKEN đã đặt trên máy chủ.',
+  name: 'Họ tên',
+  email: 'Email',
+  password: 'Mật khẩu',
+  passwordHint: 'Ít nhất {min} ký tự.',
+  passwordConfirmation: 'Nhập lại mật khẩu',
+  submit: 'Cài đặt và tạo quản trị viên',
+  submitting: 'Đang cài đặt…',
+  commandHint: 'Muốn dùng dòng lệnh? Chạy',
+  locked: 'Máy chủ này không cho cài đặt từ trình duyệt. Hãy đặt INSTALL_TOKEN trên máy chủ, hoặc chạy lệnh sau trong container API:',
+  unreachable: 'Không kết nối được API để kiểm tra cài đặt. Hãy kiểm tra API và cơ sở dữ liệu đã chạy chưa.',
+  done: 'Đã cài đặt xong Origo. Hãy đăng nhập bằng tài khoản quản trị vừa tạo.',
+};

@@ -21,6 +21,10 @@ return [
     */
     'version' => env('APP_VERSION', trim((string) @file_get_contents(base_path('VERSION'))) ?: 'dev'),
 
+    // Secret the web install screen asks for. Production refuses the screen without it, so nobody can
+    // claim the first administrator account of a freshly deployed server; `origo:install` never needs it.
+    'install_token' => env('INSTALL_TOKEN'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

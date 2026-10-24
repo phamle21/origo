@@ -5,6 +5,7 @@ use Origo\Application\ApiV1\Http\Controllers\AdminUserController;
 use Origo\Application\ApiV1\Http\Controllers\AuthController;
 use Origo\Application\ApiV1\Http\Controllers\ConceptController;
 use Origo\Application\ApiV1\Http\Controllers\ContentLanguageController;
+use Origo\Application\ApiV1\Http\Controllers\InstallController;
 use Origo\Application\ApiV1\Http\Controllers\NotificationController;
 use Origo\Application\ApiV1\Http\Controllers\PermissionController;
 use Origo\Application\ApiV1\Http\Controllers\PlanController;
@@ -20,6 +21,16 @@ use Origo\Application\ApiV1\Http\Controllers\SettingsController;
 use Origo\Application\ApiV1\Http\Controllers\SystemRoleController;
 use Origo\Application\ApiV1\Http\Controllers\UserLookupController;
 use Origo\Application\ApiV1\Http\Middleware\EnsureUserIsActive;
+
+// First-run install screen; both answer only while no administrator exists.
+Route::get('install', [InstallController::class, 'status'])
+    ->withoutMiddleware(['auth:sanctum', EnsureUserIsActive::class])
+    ->middleware('throttle:60,1')
+    ->name('install.status');
+Route::post('install', [InstallController::class, 'store'])
+    ->withoutMiddleware(['auth:sanctum', EnsureUserIsActive::class])
+    ->middleware('throttle:6,1')
+    ->name('install.store');
 
 Route::post('auth/login', [AuthController::class, 'login'])
     ->withoutMiddleware(['auth:sanctum', EnsureUserIsActive::class])

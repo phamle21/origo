@@ -6,6 +6,7 @@ import error from './error';
 import errors from './errors';
 import help from './help';
 import home from './home';
+import install from './install';
 import layout from './layout';
 import notification from './notification';
 import plan from './plan';
@@ -25,6 +26,7 @@ export default {
   errors,
   help,
   home,
+  install,
   layout,
   notification,
   plan,

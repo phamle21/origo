@@ -1,0 +1,17 @@
+export default {
+  title: 'Install Origo',
+  description: 'First start: Origo creates its database tables and the first administrator account.',
+  token: 'Install code',
+  tokenHint: 'The INSTALL_TOKEN value set on the server.',
+  name: 'Your name',
+  email: 'Email',
+  password: 'Password',
+  passwordHint: 'At least {min} characters.',
+  passwordConfirmation: 'Repeat password',
+  submit: 'Install and create administrator',
+  submitting: 'Installing…',
+  commandHint: 'Prefer the command line? Run',
+  locked: 'This server does not allow installing from the browser. Set INSTALL_TOKEN on the server, or run this command in the API container:',
+  unreachable: 'Cannot reach the API to check the installation. Check that the API and database are running.',
+  done: 'Origo is installed. Sign in with your new administrator account.',
+};

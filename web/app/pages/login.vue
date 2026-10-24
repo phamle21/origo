@@ -9,6 +9,14 @@
       <p class="text-sm text-content-muted">{{ t('auth.description') }}</p>
     </div>
 
+    <p
+      v-if="installedEmail"
+      role="status"
+      class="rounded-control bg-success-soft px-3 py-2 text-sm font-semibold text-success"
+    >
+      {{ t('install.done') }}
+    </p>
+
     <AppTextField
       v-model="credentials.email"
       type="email"
@@ -61,7 +69,9 @@ const route = useRoute();
 const localePath = useLocalePath();
 const currentUser = useCurrentUser();
 
-const credentials = reactive({ email: '', password: '' });
+// Arriving from the install screen: the new administrator's email is filled in.
+const installedEmail = typeof route.query.installed === 'string' ? route.query.installed : '';
+const credentials = reactive({ email: installedEmail, password: '' });
 const { error, errorMessage, hasFailed, isPending, execute } = useAppRequest(login);
 // The API answers a wrong email or password with one message on purpose, so only shape is checked here.
 const form = useFormValidation(z.object({ email: formRules.email(), password: z.string().min(1, { message: 'required' }) }), () => credentials);

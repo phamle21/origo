@@ -25,11 +25,17 @@ git clone https://github.com/phamle21/origo.git
 cd origo/docker
 cp .env.example .env
 docker compose up -d --build
-docker compose exec api php artisan origo:install
 ```
 
-The first start installs the PHP and Node packages, so it takes a few minutes. `origo:install` creates
-the database tables and asks for the first administrator's e-mail, name and password.
+The first start installs the PHP and Node packages, so it takes a few minutes. Then finish the
+installation in one of two ways; both create the database tables and the first administrator:
+
+- **In the browser:** open http://localhost:3310. Until an administrator exists, every page leads to
+  the install screen, which asks for your name, e-mail and password.
+- **On the command line:** `docker compose exec api php artisan origo:install`
+  (add `--email=… --name=… --no-interaction` in scripts; a temporary password is printed once).
+
+Once an administrator exists, the install screen closes for good.
 
 | Service | Address |
 |---|---|
@@ -62,6 +68,7 @@ Development settings live in `docker/.env` (ports, UID/GID, versions) and `api/.
 | `APP_URL` | API | Public API address; screen images are served from it |
 | `DB_*`, `REDIS_*` | API | PostgreSQL and Redis connections |
 | `MAIL_*` | API | Outgoing mail |
+| `INSTALL_TOKEN` | API | Code the install screen asks for; required to install from the browser in production |
 | `RENDERER_URL` | API | Internal address of the renderer |
 | `NUXT_API_BASE_URL` | Web | Internal address of the API; the browser never calls the API directly |
 | `NUXT_ERROR_NOTIFY_*` | Web | Optional Slack / Google Chat alerts for server errors |
@@ -85,6 +92,10 @@ cp .env.prod.example .env.prod      # fill in every empty value, pin ORIGO_VERSI
 docker compose -f compose.prod.yaml --env-file .env.prod up -d
 docker compose -f compose.prod.yaml --env-file .env.prod exec api php artisan origo:install
 ```
+
+Or open the web app and use the install screen: in production it asks for the `INSTALL_TOKEN` you
+set, so nobody else can claim the first administrator account of a fresh server. Without a token set,
+only the command can install.
 
 Put an HTTPS reverse proxy in front of the web (`WEB_PORT`) and API (`API_PORT`) ports, and back up
 the `api-storage` and `postgres-data` volumes. On a platform that runs each image as a separate app

@@ -2,26 +2,24 @@
 
 namespace App\Console\Commands;
 
-use App\Models\SystemRole;
-use App\Models\User;
+use App\Support\Installer;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
-use Origo\Core\Account\Actions\CreateAccount;
 use Throwable;
 
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
 /**
- * First-time setup on a new machine or server: checks the app key and the database, creates the
- * tables with their base data (permissions, roles, languages), links public storage and creates the
- * first administrator. Safe to run again: finished steps are skipped and no second admin is made.
+ * First-time setup from the command line; the web install screen (/install) does the same. Checks the app
+ * key and the database, creates the tables with their base data (permissions, roles, languages), links
+ * public storage and creates the first administrator. Safe to run again: no second admin is made.
  */
 class InstallCommand extends Command
 {
-    private const PASSWORD_MIN_LENGTH = 10;
+    public const PASSWORD_MIN_LENGTH = 10;
 
     protected $signature = 'origo:install
         {--email= : E-mail of the first administrator}
@@ -29,7 +27,7 @@ class InstallCommand extends Command
 
     protected $description = 'Install Origo: migrate the database and create the first administrator';
 
-    public function handle(CreateAccount $createAccount): int
+    public function handle(Installer $installer): int
     {
         $this->components->info('Installing Origo '.config('app.version'));
 
@@ -47,69 +45,64 @@ class InstallCommand extends Command
             return self::FAILURE;
         }
 
-        $this->components->task('Database tables and base data', fn () => $this->callSilently('migrate', ['--force' => true]) === 0);
+        $this->components->task('Database tables and base data', fn () => $installer->migrate());
+        $this->components->task('Public storage link', fn () => $installer->linkStorage());
 
-        if (! file_exists(public_path('storage'))) {
-            $this->components->task('Public storage link', fn () => $this->callSilently('storage:link') === 0);
-        }
-
-        $adminRoleId = SystemRole::fullAccessId();
-
-        if (! $adminRoleId) {
-            $this->components->error('No system role holds every permission, so no administrator can be created.');
-
-            return self::FAILURE;
-        }
-
-        if (User::query()->where('system_role_id', $adminRoleId)->where('is_active', true)->exists()) {
+        if ($installer->isInstalled()) {
             $this->components->info('An administrator already exists; nothing else to do.');
 
             return self::SUCCESS;
         }
 
-        return $this->createAdministrator($createAccount, $adminRoleId);
+        $admin = $this->askAdministrator();
+
+        if (! $admin) {
+            return self::FAILURE;
+        }
+
+        $result = $installer->install($admin);
+
+        $this->components->info("Administrator {$result['user']->email} created.");
+
+        if ($result['temporaryPassword']) {
+            $this->line("  Temporary password (shown once, change it after signing in): {$result['temporaryPassword']}");
+        }
+
+        return self::SUCCESS;
     }
 
-    private function createAdministrator(CreateAccount $createAccount, string $adminRoleId): int
+    /** @return array{name: string, email: string, password: string}|null */
+    private function askAdministrator(): ?array
     {
-        $email = $this->option('email') ?: ($this->input->isInteractive() ? text(
+        $isInteractive = $this->input->isInteractive();
+        $emailRules = ['email', 'max:255', 'unique:users,email'];
+
+        $email = $this->option('email') ?: ($isInteractive ? text(
             label: 'Administrator e-mail',
             required: true,
-            validate: fn (string $value) => $this->validationError('email', $value, ['email', 'max:255', 'unique:users,email']),
+            validate: fn (string $value) => $this->validationError('email', $value, $emailRules),
         ) : null);
-        $name = $this->option('name') ?: ($this->input->isInteractive() ? text(label: 'Administrator name', required: true) : null);
+        $name = $this->option('name') ?: ($isInteractive ? text(label: 'Administrator name', required: true) : null);
 
         if (! $email || ! $name) {
             $this->components->error('Give --email and --name when running without interaction.');
 
-            return self::FAILURE;
+            return null;
         }
 
-        if ($error = $this->validationError('email', $email, ['email', 'max:255', 'unique:users,email'])) {
+        if ($error = $this->validationError('email', $email, $emailRules)) {
             $this->components->error($error);
 
-            return self::FAILURE;
+            return null;
         }
 
-        $chosenPassword = $this->input->isInteractive() ? password(
+        $password = $isInteractive ? password(
             label: 'Password',
             hint: 'Leave empty to get a temporary password printed once.',
             validate: fn (string $value) => $value === '' ? null : $this->validationError('password', $value, [Password::min(self::PASSWORD_MIN_LENGTH)]),
         ) : '';
 
-        $result = $createAccount->handle(['name' => $name, 'email' => $email, 'title' => 'Admin', 'systemRoleId' => $adminRoleId]);
-
-        if ($chosenPassword !== '') {
-            $result['user']->update(['password' => $chosenPassword]);
-        }
-
-        $this->components->info("Administrator {$result['user']->email} created.");
-
-        if ($chosenPassword === '') {
-            $this->line("  Temporary password (shown once, change it after signing in): {$result['temporaryPassword']}");
-        }
-
-        return self::SUCCESS;
+        return ['name' => $name, 'email' => $email, 'password' => $password];
     }
 
     /** @param  list<mixed>  $rules */

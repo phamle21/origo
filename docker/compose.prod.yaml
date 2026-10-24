@@ -4,6 +4,7 @@ name: origo
 #   cp .env.prod.example .env.prod          # fill in every empty value
 #   docker compose -f compose.prod.yaml --env-file .env.prod up -d
 #   docker compose -f compose.prod.yaml --env-file .env.prod exec api php artisan origo:install
+#   (or open the web app's install screen with the INSTALL_TOKEN from .env.prod)
 # Put a reverse proxy with HTTPS in front of the web (WEB_PORT) and API (API_PORT) ports.
 
 x-api-common: &api-common

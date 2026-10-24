@@ -42,5 +42,5 @@ Người dùng thấy nó ở cuối menu tài khoản và dưới trang đăng 
 
 **Cài đặt**
 - Bản phát hành không kèm dữ liệu mẫu hay tài khoản demo; migration tạo sẵn quyền, vai trò, ngôn ngữ mặc định.
-- Cài lần đầu bằng `php artisan origo:install` (migration + tạo quản trị viên đầu tiên); kiểm tra sức khỏe ở `GET /api/health`.
+- Cài lần đầu bằng màn hình `/install` trên web hoặc lệnh `php artisan origo:install` (migration + tạo quản trị viên đầu tiên); ở production màn hình cài đặt cần `INSTALL_TOKEN`. Kiểm tra sức khỏe ở `GET /api/health`.
 - Image Docker cho amd64 và arm64 trên GHCR: `origo-api`, `origo-web`, `origo-renderer`.

@@ -98,7 +98,7 @@ HTML và URL được chụp bởi dịch vụ `renderer` (`RENDERER_URL`, mặc
 
 ### Dữ liệu nền và tài khoản đầu tiên
 
-Không có dữ liệu mẫu hay tài khoản demo. `php artisan migrate` tự tạo danh mục quyền, vai trò mặc định và hai ngôn ngữ nội dung (`vi`, `ja`); `db:seed` chỉ bổ sung lại danh mục quyền và vai trò nếu thiếu, chạy lại không đổi gì. Lần cài đầu chạy `php artisan origo:install`: kiểm tra khóa ứng dụng và CSDL, chạy migration, tạo liên kết `storage`, rồi hỏi email, tên và mật khẩu của quản trị viên đầu tiên (để trống mật khẩu thì in mật khẩu tạm một lần). Chạy lại không tạo thêm quản trị viên. Không hỏi được (CI, script) thì truyền `--email` và `--name`. `php artisan origo:create-admin email "Họ tên"` vẫn dùng được để thêm quản trị viên.
+Không có dữ liệu mẫu hay tài khoản demo. `php artisan migrate` tự tạo danh mục quyền, vai trò mặc định và hai ngôn ngữ nội dung (`vi`, `ja`); `db:seed` chỉ bổ sung lại danh mục quyền và vai trò nếu thiếu, chạy lại không đổi gì. Lần cài đầu dùng màn hình `/install` trên web (chỉ mở khi chưa có quản trị viên; ở production phải nhập `INSTALL_TOKEN`), hoặc chạy `php artisan origo:install`. Cả hai đều kiểm tra khóa ứng dụng và CSDL, chạy migration, tạo liên kết `storage`, rồi hỏi email, tên và mật khẩu của quản trị viên đầu tiên (để trống mật khẩu thì in mật khẩu tạm một lần). Chạy lại không tạo thêm quản trị viên. Không hỏi được (CI, script) thì truyền `--email` và `--name`. `php artisan origo:create-admin email "Họ tên"` vẫn dùng được để thêm quản trị viên.
 
 ## Lệnh
 
