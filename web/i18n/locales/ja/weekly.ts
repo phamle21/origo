@@ -1,0 +1,33 @@
+export default {
+  title: '週次報告',
+  description: '毎週月曜の朝に前週の進捗を確定します。週のまとめを書き、メンバーごとの作業時間を入力してください。',
+  week: '週',
+  thisWeek: '今週',
+  progress: {
+    title: '週ごとの進捗',
+    record: '今週の数値を確定',
+    rerecord: '今週の数値を再確定',
+    hint: '確定した週はその時点の数値を保つため、後で計画を変えても履歴は変わりません。',
+    overall: '全体',
+    delta: '増減',
+    timeElapsed: '経過時間',
+    notRecorded: '未確定',
+  },
+  detail: {
+    title: '{week} の週',
+    summary: '週のまとめ',
+    summaryHint: '成果、人員・要件・品質の変更など。🌐 で他の言語を追加・翻訳できます。',
+    hours: 'このプロジェクトの作業時間',
+    noMembers: 'プロジェクトにメンバーがいません。',
+    hoursOf: '{name} の作業時間',
+    hoursUnit: '時間',
+    saved: '保存しました',
+    noSummary: 'この週のまとめはまだありません。',
+  },
+  hours: {
+    title: 'メンバー別の作業時間',
+    empty: 'まだ作業時間がありません。',
+    member: 'メンバー',
+    total: '合計',
+  },
+};

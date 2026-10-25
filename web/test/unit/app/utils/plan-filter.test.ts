@@ -3,11 +3,24 @@ import { emptyPlanFilter, filterPlan, isPlanFilterActive } from '@/utils/plan-fi
 import type { PlanItem, PlanTask } from '~~/shared/contracts/plan';
 
 function item(id: string, kind: PlanItem['kind'], parentId: string | null, name: string): PlanItem {
-  return { id, kind, parentId, position: 0, name: { vi: name }, note: null, screenCodes: [] };
+  return { id, kind, parentId, position: 0, name: { vi: name }, note: null, priority: null, screenCodes: [] };
 }
 
 function task(id: string, itemId: string, stageId: string, endDate: string, status: PlanTask['status'], assigneeId: number | null): PlanTask {
-  return { id, itemId, stageId, startDate: '2026-10-01', endDate, status, assigneeId };
+  return {
+    id,
+    itemId,
+    stageId,
+    startDate: '2026-10-01',
+    endDate,
+    status,
+    assigneeId,
+    statusId: null,
+    estimateDays: null,
+    progress: null,
+    link: null,
+    note: null,
+  };
 }
 
 const items = [

@@ -3,7 +3,7 @@ import { isSamePlace, resolvePlanDrop } from '@/utils/plan-drop';
 import type { PlanItem } from '~~/shared/contracts/plan';
 
 function item(id: string, kind: PlanItem['kind'], parentId: string | null, position: number): PlanItem {
-  return { id, kind, parentId, position, name: { vi: id }, note: null, screenCodes: [] };
+  return { id, kind, parentId, position, name: { vi: id }, note: null, priority: null, screenCodes: [] };
 }
 
 const items = [

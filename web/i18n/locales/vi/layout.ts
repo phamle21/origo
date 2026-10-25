@@ -16,6 +16,8 @@ export default {
     help: 'Hướng dẫn',
   },
   sectionNav: {
+    excelTemplate: 'Mẫu Excel',
+    calendar: 'Lịch làm việc',
     myProjects: 'Dự án của tôi',
     allProjects: 'Tất cả dự án',
     users: 'Người dùng',

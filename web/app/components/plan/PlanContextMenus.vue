@@ -23,30 +23,31 @@
       ref="statusMenuElement"
       role="menu"
       :aria-label="t('plan.statusMenu.label')"
-      class="fixed z-50 flex w-52 flex-col rounded-card bg-surface p-1.5 shadow-2xl ring-1 ring-line"
+      class="fixed z-50 flex max-h-[70vh] w-56 flex-col overflow-y-auto rounded-card bg-surface p-1.5 shadow-2xl ring-1 ring-line"
       :style="{ left: `${statusMenu.x}px`, top: `${statusMenu.y}px` }"
       @keydown="handleMenuKeydown"
     >
       <p class="px-2.5 pt-1 pb-1.5 text-xs font-semibold text-content-muted">{{ t('plan.statusMenu.title') }}</p>
       <button
-        v-for="status in STATUSES"
-        :key="status"
+        v-for="status in statuses"
+        :key="status.id"
         type="button"
         role="menuitemradio"
-        :aria-checked="statusMenu.task.status === status"
+        :aria-checked="currentStatusId === status.id"
         :class="[
           'flex min-h-9 items-center gap-2 rounded-control px-2.5 text-left text-sm focus-visible:outline-2 focus-visible:outline-accent',
-          statusMenu.task.status === status ? 'bg-accent-soft font-semibold text-accent-strong' : 'hover:bg-surface-muted',
+          currentStatusId === status.id ? 'bg-accent-soft font-semibold text-accent-strong' : 'hover:bg-surface-muted',
         ]"
-        @click="chooseStatus(status)"
+        @click="chooseStatus(status.id)"
       >
         <span
           aria-hidden="true"
-          :class="['size-2.5 rounded-full', STATUS_DOTS[status]]"
+          class="size-2.5 shrink-0 rounded-full"
+          :style="{ backgroundColor: status.color }"
         />
-        <span class="flex-1">{{ t(`plan.status.${status}`) }}</span>
+        <span class="flex-1">{{ resolveLocalizedText(status.name, language).value }}</span>
         <AppIcon
-          v-if="statusMenu.task.status === status"
+          v-if="currentStatusId === status.id"
           name="check"
           :size="14"
         />
@@ -115,8 +116,9 @@
 <script setup lang="ts">
 import AppIcon, { type AppIconName } from '@/components/ui/AppIcon.vue';
 import { resolveLocalizedText } from '@/utils/content-language';
+import { statusOfTask } from '@/utils/plan-status';
 import type { ContentLocale } from '~~/shared/contracts/content';
-import type { PlanItem, PlanTask } from '~~/shared/contracts/plan';
+import type { PlanItem, PlanStatus, PlanTask } from '~~/shared/contracts/plan';
 
 /**
  * The right-click menus and the note tooltip of the plan, shared by the chart and the table: a status
@@ -124,7 +126,7 @@ import type { PlanItem, PlanTask } from '~~/shared/contracts/plan';
  * quick note shown when hovering the ⓘ button. They are drawn in a fixed layer on the page so a
  * scrolling box never cuts them off. The view opens them through the exposed functions.
  */
-const props = defineProps<{ canEdit: boolean; language: ContentLocale }>();
+const props = withDefaults(defineProps<{ canEdit: boolean; language: ContentLocale; statuses?: PlanStatus[] }>(), { statuses: () => [] });
 
 const emit = defineEmits<{
   select: [itemId: string];
@@ -134,7 +136,7 @@ const emit = defineEmits<{
   moveItemStep: [itemId: string, direction: 'up' | 'down'];
   rowAction: [itemId: string, action: 'addChild' | 'delete'];
   removeTask: [task: PlanTask];
-  changeTaskStatus: [task: PlanTask, status: PlanTask['status']];
+  changeTaskStatus: [task: PlanTask, statusId: string];
 }>();
 
 const { t } = useI18n();
@@ -143,8 +145,6 @@ function nameOf(item: PlanItem): string {
   return resolveLocalizedText(item.name, props.language).value;
 }
 
-const STATUSES: PlanTask['status'][] = ['todo', 'doing', 'done'];
-const STATUS_DOTS = { todo: 'bg-neutral-mark', doing: 'bg-info', done: 'bg-success-mark' } as const;
 const MENU_WIDTH = 208;
 const MENU_HEIGHT = 260;
 const ROW_MENU_WIDTH = 224;
@@ -218,13 +218,16 @@ function closeStatusMenu(returnFocus = false): void {
   }
 }
 
-function chooseStatus(status: PlanTask['status']): void {
+const currentStatusId = computed(() => (statusMenu.value ? (statusOfTask(statusMenu.value.task, props.statuses)?.id ?? null) : null));
+
+function chooseStatus(statusId: string): void {
   const task = statusMenu.value?.task;
+  const isCurrent = currentStatusId.value === statusId;
 
   closeStatusMenu(true);
 
-  if (task && task.status !== status) {
-    emit('changeTaskStatus', task, status);
+  if (task && !isCurrent) {
+    emit('changeTaskStatus', task, statusId);
   }
 }
 

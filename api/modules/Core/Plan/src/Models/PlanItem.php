@@ -12,7 +12,7 @@ use Origo\Core\Plan\Enums\PlanItemKind;
 use Origo\Core\Project\Models\Project;
 use Origo\Core\Screen\Models\Screen;
 
-#[Fillable(['project_id', 'parent_id', 'kind', 'name', 'note', 'position'])]
+#[Fillable(['project_id', 'parent_id', 'kind', 'name', 'note', 'position', 'priority'])]
 class PlanItem extends Model
 {
     use HasUlids;
@@ -22,7 +22,7 @@ class PlanItem extends Model
      */
     protected function casts(): array
     {
-        return ['kind' => PlanItemKind::class, 'name' => 'array', 'position' => 'integer'];
+        return ['kind' => PlanItemKind::class, 'name' => 'array', 'position' => 'integer', 'priority' => 'integer'];
     }
 
     /**

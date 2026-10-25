@@ -14,5 +14,7 @@ export const screenCodeSchema = upperCode(/^sc-\d{2,3}$/i);
 export const ulidSchema = z.string().regex(/^[0-9a-hjkmnp-tv-z]{26}$/i);
 export const pointIdSchema = ulidSchema;
 export const userIdSchema = z.coerce.number().int().positive();
+// A plan week, given by its Monday.
+export const weekSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
 export const projectParamsSchema = z.object({ code: projectCodeSchema });

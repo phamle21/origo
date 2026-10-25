@@ -15,7 +15,7 @@ use Origo\Core\Project\Support\LocalizedText;
 class SyncPlanStages
 {
     /**
-     * @param  array<int, array{id?: string|null, name: array<string, mixed>, color: string}>  $stages
+     * @param  array<int, array{id?: string|null, name: array<string, mixed>, color: string, startDate?: string|null, endDate?: string|null, owner?: string|null}>  $stages
      */
     public function handle(Project $project, array $stages): void
     {
@@ -28,7 +28,16 @@ class SyncPlanStages
                     ? PlanStage::query()->where('project_id', $project->id)->findOrFail($data['id'])
                     : new PlanStage(['project_id' => $project->id, 'key' => $this->uniqueKey($project, $data['name'])]);
 
-                $stage->fill(['name' => LocalizedText::normalize($data['name']), 'color' => strtolower($data['color']), 'position' => $index + 1])->save();
+                $stage->fill(['name' => LocalizedText::normalize($data['name']), 'color' => strtolower($data['color']), 'position' => $index + 1]);
+
+                // The stage window and its owner are optional; a list sent without them keeps them.
+                foreach (['startDate' => 'start_date', 'endDate' => 'end_date', 'owner' => 'owner'] as $field => $column) {
+                    if (array_key_exists($field, $data)) {
+                        $stage->{$column} = $data[$field] === '' ? null : $data[$field];
+                    }
+                }
+
+                $stage->save();
             }
         });
     }

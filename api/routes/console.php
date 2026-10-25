@@ -2,6 +2,7 @@
 
 use App\Models\SystemRole;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 use Origo\Core\Account\Actions\CreateAccount;
 
 // First start on a new server: the database has roles and permissions (migrations) but nobody can sign
@@ -22,3 +23,6 @@ Artisan::command('origo:create-admin {email} {name}', function (string $email, s
 
     return 0;
 })->purpose('Create the first Origo administrator');
+
+// Weekly reports: last week's progress is frozen every Monday before the 10:00 report deadline (Vietnam time).
+Schedule::command('origo:plan-weekly-snapshot')->weeklyOn(1, '09:00')->timezone('Asia/Ho_Chi_Minh')->withoutOverlapping();

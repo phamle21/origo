@@ -4,11 +4,24 @@ import { toDayNumber } from '@/utils/plan-dates';
 import type { PlanItem, PlanTask } from '~~/shared/contracts/plan';
 
 function item(id: string, kind: PlanItem['kind'], parentId: string | null, position = 0): PlanItem {
-  return { id, kind, parentId, position, name: { vi: id, ja: null }, note: null, screenCodes: [] };
+  return { id, kind, parentId, position, name: { vi: id, ja: null }, note: null, priority: null, screenCodes: [] };
 }
 
 function task(id: string, itemId: string, startDate: string, endDate: string, status: PlanTask['status'] = 'todo'): PlanTask {
-  return { id, itemId, stageId: `stage-${id}`, startDate, endDate, status, assigneeId: null };
+  return {
+    id,
+    itemId,
+    stageId: `stage-${id}`,
+    startDate,
+    endDate,
+    status,
+    assigneeId: null,
+    statusId: null,
+    estimateDays: null,
+    progress: null,
+    link: null,
+    note: null,
+  };
 }
 
 const items = [

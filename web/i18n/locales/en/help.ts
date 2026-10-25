@@ -72,6 +72,16 @@ export default {
       title: 'Reading the plan',
       summary: 'Understand the chart: rows, coloured bars, today and what is done.',
       steps: {
+        summary: {
+          title: 'Progress overview',
+          text: 'The overview sits on top. 1: work done (in man-days, or in tasks while no effort is entered). 2: time passed, in working days. Click the overview line to open the table per stage (3): window, owner, planned, done and left.',
+          tip: 'When time passed runs well ahead of work done, Origo shows “Behind schedule”. A stage past its end with unfinished tasks is marked “Late”.',
+        },
+        export: {
+          title: 'Export to Excel',
+          text: 'Click “Export Excel” (1) to download a workbook with three sheets: Gantt Chart (per stage: effort, start, end, owner, status, %, link, note, plus a day-by-day chart), Weekly Report (hours, weekly progress, summaries) and .setting (statuses, members, holidays).',
+          tip: 'The file uses the content language you have chosen; missing translations fall back to Vietnamese.',
+        },
         rows: {
           title: 'Each row is a piece of work',
           text: 'The work is named on the left (1). On the right are coloured bars (2), from the start day to the end day. The red line (3) is today.',
@@ -103,6 +113,15 @@ export default {
       title: 'Changing the plan',
       summary: 'Drag bars to change dates, change status, reorder rows and add notes.',
       steps: {
+        effort: {
+          title: 'Record effort, % and documents',
+          text: 'When editing a stage’s schedule, pick the project’s own status (1), the planned man-days (2), the share done (3) and a link or document name (4). There is a note box too. The overview’s progress comes from these figures.',
+          tip: 'A task in a “done” status always counts as 100%; no need to enter a percentage.',
+        },
+        statuses: {
+          title: 'Name your own statuses',
+          text: 'Click the gear and open the “Statuses” tab (1). Each status belongs to a group (2) — to do, in progress or done — which sets the bar colour and how progress is counted. “Add status” (3) adds one, e.g. “Checking” or “Waiting”.',
+        },
         move: {
           title: 'Move a whole bar',
           text: 'Press and hold the middle of a bar, then drag it left or right. Let go and it is saved.',
@@ -130,7 +149,7 @@ export default {
         },
         stages: {
           title: 'Edit the stages',
-          text: 'Click the gear on the toolbar. Drag ⋮⋮ (1) to reorder, rename (2), click the colour (3) to pick another one. Then press Save.',
+          text: 'Click the gear on the toolbar, “Stages” tab. Drag ⋮⋮ (1) to reorder, rename (2), click the colour (3) to pick another one. You can also set the window and owner of the whole stage (4). Then press Save.',
         },
         table: {
           title: 'Table view',
@@ -210,10 +229,36 @@ export default {
         },
       },
     },
+    weekly: {
+      title: 'Weekly report',
+      summary: 'Freeze progress every week, write the summary and enter hours.',
+      steps: {
+        progress: {
+          title: 'Progress by week',
+          text: 'Open the project’s “Weekly report” tab. Each row (1) is a week: overall progress, the change from the week before, time passed and each stage’s progress when it was recorded. “Record this week now” (2) saves the figures right away.',
+          tip: 'Every Monday morning Origo records the week before by itself. A recorded week stays as it was, whatever changes later.',
+        },
+        week: {
+          title: 'Summary and hours',
+          text: 'Pick a week (1), write its summary (2): results, changes in people, requirements and quality. Enter the hours each member worked on the project (3), then Save.',
+          tip: 'Use 🌐 next to the summary to add a Japanese version or translate it automatically.',
+        },
+      },
+    },
     admin: {
       title: 'Administration',
       summary: 'Create users, share out rights and choose languages for the whole system.',
       steps: {
+        'excel-template': {
+          title: 'Your team’s Excel template',
+          text: 'Settings → Excel template. Upload the project-management file your team uses (2) and click “Upload and use” (3). Origo keeps only its layout, formulas, colours and drop-downs; the file’s old data is removed before it is stored. Box 1 shows the template in use and the Gantt sheet chosen.',
+          tip: 'From then on, “Export Excel” on a plan fills exactly the cells people type into; formulas recalculate when the file is opened in Excel or Google Sheets.',
+        },
+        calendar: {
+          title: 'Working calendar',
+          text: 'Settings → Working calendar. Each row is a date (1) and its kind (2): a holiday, or a make-up working day (a weekend day that is worked). The list is grouped by year (3).',
+          tip: 'Every “working days” figure in plans, weekly reports and the Excel file uses this calendar.',
+        },
         users: {
           title: 'Users',
           text: 'Open Settings → Users. Press “New account” (1) to create a user. Press “Manage” (2) to edit, lock or add them to projects.',

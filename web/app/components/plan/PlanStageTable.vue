@@ -13,7 +13,7 @@
         <tr>
           <th
             scope="col"
-            class="sticky left-0 z-10 min-w-64 border-r border-b border-line-strong bg-toolbar px-3 py-2 text-left text-xs font-semibold text-content-muted"
+            class="sticky left-0 z-10 w-72 border-r border-b border-line-strong bg-toolbar px-3 py-2 text-left text-xs font-semibold text-content-muted"
           >
             {{ t('plan.gantt.item') }}
           </th>
@@ -21,9 +21,9 @@
             v-for="stage in stages"
             :key="stage.id"
             scope="col"
-            class="min-w-36 border-b border-line-strong px-3 py-2 text-left text-xs font-semibold"
+            class="w-40 border-b border-line-strong px-3 py-2 text-left text-xs font-semibold"
           >
-            <span class="flex items-center gap-1.5">
+            <span class="flex w-36 items-center gap-1.5">
               <span
                 aria-hidden="true"
                 class="size-2.5 rounded-full"
@@ -71,7 +71,8 @@
               ]"
               :style="{ paddingLeft: `${(canEdit ? 4 : 12) + row.depth * 16}px` }"
             >
-              <span class="flex items-start gap-1">
+              <!-- A fixed width, so long names wrap instead of pushing the stage columns out of view. -->
+              <span class="flex w-64 items-start gap-1 whitespace-normal">
                 <button
                   v-if="canEdit"
                   type="button"
@@ -91,14 +92,21 @@
                 <button
                   type="button"
                   :class="[
-                    'text-left hover:underline focus-visible:outline-2 focus-visible:outline-accent',
+                    'min-w-0 text-left break-words hover:underline focus-visible:outline-2 focus-visible:outline-accent',
                     row.item.kind === 'feature' ? '' : 'font-semibold',
                   ]"
                   :aria-pressed="row.item.id === selectedItemId"
                   @click="emit('select', row.item.id)"
                   @keydown="menus?.handleNameKeydown($event, row.item)"
                 >
-                  {{ resolveLocalizedText(row.item.name, language).value }}
+                  <span
+                    v-if="row.item.priority"
+                    :class="[
+                      'mr-1 rounded px-1 font-mono text-[0.6875rem] font-bold',
+                      row.item.priority <= 2 ? 'bg-danger-soft text-danger' : 'bg-neutral-soft text-content-muted',
+                    ]"
+                    >P{{ row.item.priority }}<span class="sr-only">,&nbsp;</span></span
+                  >{{ resolveLocalizedText(row.item.name, language).value }}
                 </button>
                 <button
                   v-if="row.item.kind === 'feature' && (row.item.note || canEdit)"
@@ -144,14 +152,23 @@
                 v-if="taskFor(row, stage.id)"
                 type="button"
                 class="-mx-1.5 -my-1 flex flex-col items-start gap-1 rounded-control px-1.5 py-1 text-left hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-accent"
-                :aria-label="`${resolveLocalizedText(stage.name, language).value}: ${formatRange(taskFor(row, stage.id)!)}, ${t(`plan.status.${taskFor(row, stage.id)!.status}`)}`"
+                :aria-label="`${resolveLocalizedText(stage.name, language).value}: ${formatRange(taskFor(row, stage.id)!)}, ${statusLabel(taskFor(row, stage.id)!)}`"
                 :title="canEdit ? t('plan.statusMenu.hint') : undefined"
                 @click="emit('selectStage', row.item.id, stage.id)"
                 @contextmenu="menus?.openStatusMenu($event, taskFor(row, stage.id)!)"
                 @keydown="handleCellKeydown($event, taskFor(row, stage.id)!)"
               >
                 <span class="block text-xs tabular-nums">{{ formatRange(taskFor(row, stage.id)!) }}</span>
-                <AppBadge :tone="STATUS_TONES[taskFor(row, stage.id)!.status]">{{ t(`plan.status.${taskFor(row, stage.id)!.status}`) }}</AppBadge>
+                <PlanStatusBadge
+                  :status="statusOfTask(taskFor(row, stage.id)!, statuses)"
+                  :category="taskFor(row, stage.id)!.status"
+                  :language="language"
+                />
+                <span
+                  v-if="effortLabel(taskFor(row, stage.id)!)"
+                  class="block text-xs text-content-muted tabular-nums"
+                  >{{ effortLabel(taskFor(row, stage.id)!) }}</span
+                >
               </button>
               <span
                 v-else-if="row.item.kind === 'feature'"
@@ -180,13 +197,14 @@
       ref="menus"
       :can-edit="canEdit"
       :language="language"
+      :statuses="statuses"
       @select="emit('select', $event)"
       @select-stage="(itemId, stageId) => emit('selectStage', itemId, stageId)"
       @open-note="emit('openNote', $event)"
       @move-item-step="(itemId, direction) => emit('moveItemStep', itemId, direction)"
       @row-action="(itemId, action) => emit('rowAction', itemId, action)"
       @remove-task="emit('removeTask', $event)"
-      @change-task-status="(task, status) => emit('changeTaskStatus', task, status)"
+      @change-task-status="(task, statusId) => emit('changeTaskStatus', task, statusId)"
     />
   </div>
 </template>
@@ -194,20 +212,21 @@
 <script setup lang="ts">
 import PlanContextMenus from '@/components/plan/PlanContextMenus.vue';
 import PlanDropPlaceholder from '@/components/plan/PlanDropPlaceholder.vue';
-import AppBadge from '@/components/ui/AppBadge.vue';
+import PlanStatusBadge from '@/components/plan/PlanStatusBadge.vue';
 import AppIcon from '@/components/ui/AppIcon.vue';
 import { usePlanRowDrag, type PlanRowMove } from '@/composables/plan/usePlanRowDrag';
 import { resolveLocalizedText } from '@/utils/content-language';
+import { statusOfTask } from '@/utils/plan-status';
 import { isRowDone, type PlanRow } from '@/utils/plan-tree';
 import type { ContentLocale } from '~~/shared/contracts/content';
-import type { PlanItem, PlanStage, PlanTask } from '~~/shared/contracts/plan';
-
-const STATUS_TONES = { todo: 'neutral', doing: 'info', done: 'success' } as const;
+import type { PlanItem, PlanStage, PlanStatus, PlanTask } from '~~/shared/contracts/plan';
 
 const props = withDefaults(
   defineProps<{
     rows: PlanRow[];
     stages: PlanStage[];
+    /** The project's own task statuses. */
+    statuses?: PlanStatus[];
     selectedItemId: string | null;
     language: ContentLocale;
     /** Every plan item, including those inside collapsed rows, to work out where a drag would land. */
@@ -216,7 +235,7 @@ const props = withDefaults(
     /** Full-screen mode: the table takes all the height it is given and scrolls inside. */
     isFilling?: boolean;
   }>(),
-  { items: undefined, canEdit: false, isFilling: false },
+  { items: undefined, statuses: () => [], canEdit: false, isFilling: false },
 );
 
 const emit = defineEmits<{
@@ -228,7 +247,7 @@ const emit = defineEmits<{
   rowAction: [itemId: string, action: 'addChild' | 'delete'];
   openNote: [itemId: string];
   removeTask: [task: PlanTask];
-  changeTaskStatus: [task: PlanTask, status: PlanTask['status']];
+  changeTaskStatus: [task: PlanTask, statusId: string];
 }>();
 
 const { t, locale } = useI18n();
@@ -260,6 +279,24 @@ function handleRowKeydown(event: KeyboardEvent, itemId: string): void {
 
 function taskFor(row: PlanRow, stageId: string): PlanTask | undefined {
   return row.tasks.find((task) => task.stageId === stageId);
+}
+
+function statusLabel(task: PlanTask): string {
+  const status = statusOfTask(task, props.statuses);
+
+  return status ? resolveLocalizedText(status.name, props.language).value : t(`plan.status.${task.status}`);
+}
+
+// "1.5 man-days · 40%": the effort and, while unfinished, how far it got.
+function effortLabel(task: PlanTask): string {
+  const parts = [
+    task.estimateDays !== null
+      ? t('plan.task.estimateValue', { days: new Intl.NumberFormat(locale.value, { maximumFractionDigits: 2 }).format(task.estimateDays) })
+      : '',
+    task.status !== 'done' && task.progress ? `${task.progress}%` : '',
+  ];
+
+  return parts.filter(Boolean).join(' · ');
 }
 
 function formatRange(task: PlanTask): string {

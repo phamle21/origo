@@ -72,6 +72,16 @@ export default {
       title: 'Đọc kế hoạch',
       summary: 'Hiểu biểu đồ: dòng, thanh màu, ngày hôm nay và chỗ đã xong.',
       steps: {
+        summary: {
+          title: 'Tổng quan tiến độ',
+          text: 'Trên cùng là phần tổng quan. Số 1: phần việc đã làm (theo ngày công, hoặc theo số việc nếu chưa nhập công). Số 2: thời gian đã qua, tính theo ngày làm việc. Bấm vào dòng tổng quan để mở bảng từng giai đoạn (số 3): khung thời gian, bên phụ trách, dự tính, đã làm, còn lại.',
+          tip: 'Nếu thời gian đã qua vượt xa phần việc đã làm, Origo báo “Chậm tiến độ”. Giai đoạn đã hết hạn mà còn việc chưa xong thì có nhãn “Trễ”.',
+        },
+        export: {
+          title: 'Xuất ra Excel',
+          text: 'Bấm “Xuất Excel” (số 1) để tải file gồm 3 sheet: Gantt Chart (mỗi giai đoạn có cột công, bắt đầu, kết thúc, người phụ trách, trạng thái, %, link, ghi chú, và biểu đồ theo ngày), Weekly Report (giờ làm, tiến độ từng tuần, nhận xét) và .setting (trạng thái, thành viên, ngày nghỉ).',
+          tip: 'File dùng ngôn ngữ nội dung bạn đang chọn; thiếu bản dịch thì lấy tiếng Việt.',
+        },
         rows: {
           title: 'Mỗi dòng là một việc',
           text: 'Bên trái là tên việc (số 1). Bên phải là thanh màu (số 2): thanh dài từ ngày bắt đầu tới ngày xong. Vạch đỏ (số 3) là hôm nay.',
@@ -103,6 +113,15 @@ export default {
       title: 'Sửa kế hoạch',
       summary: 'Kéo thanh để đổi ngày, đổi trạng thái, đổi thứ tự và ghi chú.',
       steps: {
+        effort: {
+          title: 'Ghi công, % và tài liệu',
+          text: 'Khi sửa lịch một giai đoạn: chọn trạng thái riêng của dự án (số 1), ghi số ngày công dự tính (số 2), phần đã xong (số 3) và link hoặc tên tài liệu (số 4). Có thêm ô ghi chú. Tiến độ trong phần tổng quan được tính từ các số này.',
+          tip: 'Việc ở trạng thái thuộc nhóm “Xong” luôn tính đủ 100%, không cần nhập %.',
+        },
+        statuses: {
+          title: 'Đặt trạng thái riêng',
+          text: 'Bấm bánh răng, chọn thẻ “Trạng thái” (số 1). Mỗi trạng thái thuộc một nhóm (số 2): Chưa làm, Đang làm hoặc Xong — nhóm quyết định màu thanh và cách tính tiến độ. Bấm “Thêm trạng thái” (số 3) để thêm, ví dụ “Đang kiểm tra” hay “Đang chờ”.',
+        },
         move: {
           title: 'Dời cả thanh',
           text: 'Bấm giữ vào giữa thanh màu rồi kéo sang trái hoặc phải. Thả tay ra là lưu luôn.',
@@ -130,7 +149,7 @@ export default {
         },
         stages: {
           title: 'Sửa các giai đoạn',
-          text: 'Bấm bánh răng trên thanh công cụ. Kéo ⋮⋮ (số 1) để đổi thứ tự, sửa tên (số 2), bấm ô màu (số 3) để chọn màu khác. Xong thì bấm Lưu.',
+          text: 'Bấm bánh răng trên thanh công cụ, thẻ “Giai đoạn”. Kéo ⋮⋮ (số 1) để đổi thứ tự, sửa tên (số 2), bấm ô màu (số 3) để chọn màu khác. Có thể ghi khung thời gian và bên phụ trách của cả giai đoạn (số 4). Xong thì bấm Lưu.',
         },
         table: {
           title: 'Chế độ Bảng',
@@ -210,10 +229,36 @@ export default {
         },
       },
     },
+    weekly: {
+      title: 'Báo cáo tuần',
+      summary: 'Chốt tiến độ hằng tuần, viết nhận xét và nhập giờ làm.',
+      steps: {
+        progress: {
+          title: 'Tiến độ theo tuần',
+          text: 'Mở thẻ “Báo cáo tuần” của dự án. Mỗi dòng (số 1) là một tuần: tiến độ tổng, mức tăng so với tuần trước, thời gian đã qua và tiến độ từng giai đoạn lúc chốt. Bấm “Chốt số liệu tuần này” (số 2) để lưu số liệu ngay bây giờ.',
+          tip: 'Sáng thứ Hai Origo tự chốt số liệu của tuần trước. Tuần đã chốt giữ nguyên, sửa kế hoạch sau đó không làm đổi lịch sử.',
+        },
+        week: {
+          title: 'Nhận xét và giờ làm',
+          text: 'Chọn tuần (số 1), viết nhận xét trong tuần (số 2): kết quả, thay đổi nhân sự, yêu cầu, chất lượng. Nhập số giờ mỗi người làm cho dự án (số 3), rồi bấm Lưu.',
+          tip: 'Bấm 🌐 cạnh ô nhận xét để thêm bản tiếng Nhật hoặc dịch tự động.',
+        },
+      },
+    },
     admin: {
       title: 'Quản trị',
       summary: 'Tạo người dùng, chia quyền và chọn ngôn ngữ cho cả hệ thống.',
       steps: {
+        'excel-template': {
+          title: 'Mẫu Excel của nhóm',
+          text: 'Cài đặt → Mẫu Excel. Tải lên file quản lý dự án nhóm đang dùng (số 2) rồi bấm “Tải lên và dùng” (số 3). Origo chỉ giữ bố cục, công thức, màu và ô chọn; dữ liệu cũ trong file bị xóa trước khi lưu. Ô số 1 cho biết mẫu đang dùng và sheet Gantt được chọn.',
+          tip: 'Từ đó “Xuất Excel” trong kế hoạch điền đúng vào các ô người ta vẫn gõ tay; công thức tự tính lại khi mở file bằng Excel hoặc Google Sheets.',
+        },
+        calendar: {
+          title: 'Lịch làm việc',
+          text: 'Cài đặt → Lịch làm việc. Mỗi dòng là một ngày (số 1) và loại ngày (số 2): Nghỉ lễ hoặc Làm bù (ngày cuối tuần vẫn đi làm). Danh sách chia theo năm (số 3).',
+          tip: 'Mọi số “ngày làm việc” trong kế hoạch, báo cáo tuần và file Excel đều tính theo lịch này.',
+        },
         users: {
           title: 'Người dùng',
           text: 'Mở Cài đặt → Người dùng. Bấm “Tài khoản mới” (số 1) để tạo người dùng. Bấm “Quản lý” (số 2) để sửa, khóa hoặc thêm họ vào dự án.',

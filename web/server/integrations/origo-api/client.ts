@@ -22,6 +22,8 @@ export interface OrigoApiRequestOptions {
   body?: unknown;
   /** Overrides the default timeout for a call known to be slow, such as capturing a page. */
   timeout?: number;
+  /** For file downloads such as the Excel export; JSON otherwise. */
+  responseType?: 'arrayBuffer';
 }
 
 interface UpstreamError {

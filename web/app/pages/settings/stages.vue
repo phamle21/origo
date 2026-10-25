@@ -67,7 +67,7 @@ if (!useSystemAccess().canManageSettings.value) {
 
 const { data, isPending, hasFailed, errorMessage, refresh } = await useRouteResource('stage-template', () => fetchStageTemplate());
 // The template has no stage ids; the editor keys rows by id, so the stable key stands in for it.
-const stages = computed(() => data.value?.map((stage) => ({ id: stage.key, ...stage })) ?? null);
+const stages = computed(() => data.value?.map((stage) => ({ id: stage.key, startDate: null, endDate: null, owner: null, ...stage })) ?? null);
 const saving = useAppRequest(saveStageTemplate);
 const isSaved = ref(false);
 const isDirty = ref(false);

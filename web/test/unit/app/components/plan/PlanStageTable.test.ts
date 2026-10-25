@@ -8,10 +8,10 @@ import { buildPlanRows } from '@/utils/plan-tree';
 import type { PlanItem } from '~~/shared/contracts/plan';
 
 const tree: PlanItem[] = [
-  { id: 'phase', parentId: null, kind: 'phase', name: { vi: 'Phase 1' }, position: 1, note: null, screenCodes: [] },
-  { id: 'module', parentId: 'phase', kind: 'module', name: { vi: 'Thanh toán' }, position: 1, note: null, screenCodes: [] },
-  { id: 'a', parentId: 'module', kind: 'feature', name: { vi: 'Giỏ hàng' }, position: 1, note: null, screenCodes: [] },
-  { id: 'b', parentId: 'module', kind: 'feature', name: { vi: 'Mã giảm giá' }, position: 2, note: null, screenCodes: [] },
+  { id: 'phase', parentId: null, kind: 'phase', name: { vi: 'Phase 1' }, position: 1, note: null, priority: null, screenCodes: [] },
+  { id: 'module', parentId: 'phase', kind: 'module', name: { vi: 'Thanh toán' }, position: 1, note: null, priority: null, screenCodes: [] },
+  { id: 'a', parentId: 'module', kind: 'feature', name: { vi: 'Giỏ hàng' }, position: 1, note: null, priority: null, screenCodes: [] },
+  { id: 'b', parentId: 'module', kind: 'feature', name: { vi: 'Mã giảm giá' }, position: 2, note: null, priority: null, screenCodes: [] },
 ];
 
 async function mountTable(canEdit = true) {
@@ -65,7 +65,20 @@ describe('PlanStageTable', () => {
 });
 
 describe('PlanStageTable menus', () => {
-  const task = { id: 'task', itemId: 'a', stageId: 'dev', startDate: '2026-10-05', endDate: '2026-10-09', status: 'doing', assigneeId: null } as const;
+  const task = {
+    id: 'task',
+    itemId: 'a',
+    stageId: 'dev',
+    startDate: '2026-10-05',
+    endDate: '2026-10-09',
+    status: 'doing',
+    assigneeId: null,
+    statusId: null,
+    estimateDays: null,
+    progress: null,
+    link: null,
+    note: null,
+  } as const;
   const noted = tree.map((item) => (item.id === 'a' ? { ...item, note: 'Hỏi lại khách' } : item));
 
   async function mountWithTask(canEdit = true) {
@@ -73,7 +86,12 @@ describe('PlanStageTable menus', () => {
       props: {
         rows: buildPlanRows(noted, [task]),
         items: noted,
-        stages: [{ id: 'dev', key: 'development', name: { vi: 'Phát triển' }, color: '#0f766e' }],
+        stages: [{ id: 'dev', key: 'development', name: { vi: 'Phát triển' }, color: '#0f766e', startDate: null, endDate: null, owner: null }],
+        statuses: [
+          { id: 's-todo', name: { vi: 'Chưa làm' }, category: 'todo' as const, color: '#94a3b8' },
+          { id: 's-doing', name: { vi: 'Đang làm' }, category: 'doing' as const, color: '#2563eb' },
+          { id: 's-done', name: { vi: 'Xong' }, category: 'done' as const, color: '#16a34a' },
+        ],
         selectedItemId: null,
         language: 'vi',
         canEdit,
@@ -91,7 +109,7 @@ describe('PlanStageTable menus', () => {
     const done = [...document.body.querySelectorAll<HTMLElement>('[role="menuitemradio"]')].find((item) => item.textContent?.includes('Xong'));
     done?.click();
     await flushPromises();
-    expect(wrapper.emitted('changeTaskStatus')).toEqual([[task, 'done']]);
+    expect(wrapper.emitted('changeTaskStatus')).toEqual([[task, 's-done']]);
 
     await wrapper.get('button[aria-label^="Phát triển"]').trigger('contextmenu');
     [...document.body.querySelectorAll<HTMLElement>('[role="menuitem"]')].at(-1)?.click();

@@ -43,6 +43,7 @@ export default {
     shortcuts: 'Shortcuts',
   },
   nav: {
+    weekly: 'Weekly report',
     label: 'Project sections',
     plan: 'Plan',
     design: 'Design',

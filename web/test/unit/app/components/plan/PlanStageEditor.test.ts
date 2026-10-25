@@ -7,8 +7,8 @@ import PlanStageEditor from '@/components/plan/PlanStageEditor.vue';
 import { useConfirmStore } from '@/stores/useConfirmStore';
 
 const stages = [
-  { id: 'bd', key: 'basic-design', name: { vi: 'Thiết kế', ja: null }, color: '#7c3aed' },
-  { id: 'dev', key: 'development', name: { vi: 'Phát triển', ja: null }, color: '#0f766e' },
+  { id: 'bd', key: 'basic-design', name: { vi: 'Thiết kế', ja: null }, color: '#7c3aed', startDate: null, endDate: null, owner: null },
+  { id: 'dev', key: 'development', name: { vi: 'Phát triển', ja: null }, color: '#0f766e', startDate: null, endDate: null, owner: null },
 ];
 
 async function mountEditor() {

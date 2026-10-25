@@ -16,7 +16,8 @@
         "origo/core-account": "^1.0",
         "origo/core-plan": "^1.0",
         "origo/core-project": "^1.0",
-        "origo/core-screen": "^1.0"
+        "origo/core-screen": "^1.0",
+        "phpoffice/phpspreadsheet": "^5.10"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

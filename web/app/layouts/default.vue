@@ -154,6 +154,8 @@ const headerLinks = computed<NavLink[]>(() => {
         ],
       },
       { label: t('layout.sectionNav.stages'), path: '/settings/stages', isShown: canManageSettings.value },
+      { label: t('layout.sectionNav.calendar'), path: '/settings/calendar', isShown: canManageSettings.value },
+      { label: t('layout.sectionNav.excelTemplate'), path: '/settings/excel-template', isShown: canManageSettings.value },
       { label: t('layout.sectionNav.languages'), path: '/settings/languages', isShown: canManageSettings.value },
     ];
   }

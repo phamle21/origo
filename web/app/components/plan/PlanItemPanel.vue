@@ -41,6 +41,27 @@
 
         <div
           v-if="item.kind === 'feature'"
+          class="flex items-center gap-2 text-xs font-semibold"
+        >
+          <span class="text-content-muted">{{ t('plan.priority.label') }}</span>
+          <AppSelect
+            v-if="canEdit"
+            :model-value="item.priority"
+            size="sm"
+            class="w-32"
+            :aria-label="t('plan.priority.label')"
+            :options="priorityOptions"
+            @update:model-value="(value) => emit('setPriority', value === null ? null : Number(value))"
+          />
+          <AppBadge
+            v-else
+            :tone="item.priority && item.priority <= 2 ? 'danger' : 'neutral'"
+            >{{ item.priority ? `P${item.priority}` : t('plan.priority.none') }}</AppBadge
+          >
+        </div>
+
+        <div
+          v-if="item.kind === 'feature'"
           class="flex flex-col gap-1"
         >
           <span class="flex justify-between text-xs font-semibold">
@@ -96,6 +117,8 @@
             :stage="focusStage"
             :stage-name="resolveLocalizedText(focusStage.name, language).value"
             :task="taskByStage.get(focusStage.id) ?? null"
+            :statuses="statuses"
+            :language="language"
             :members="members"
             :can-edit="canEdit"
             :suggested-dates="suggestDates(stages.findIndex((stage) => stage.id === focusStage?.id))"
@@ -130,6 +153,8 @@
               :stage="stage"
               :stage-name="resolveLocalizedText(stage.name, language).value"
               :task="taskByStage.get(stage.id) ?? null"
+              :statuses="statuses"
+              :language="language"
               :members="members"
               :can-edit="canEdit"
               :suggested-dates="suggestDates(index)"
@@ -380,6 +405,7 @@ import AppCheckbox from '@/components/ui/AppCheckbox.vue';
 import PlanPanelSection from '@/components/plan/PlanPanelSection.vue';
 import PlanTaskEditor from '@/components/plan/PlanTaskEditor.vue';
 import AppBadge from '@/components/ui/AppBadge.vue';
+import AppSelect from '@/components/ui/AppSelect.vue';
 import AppIcon from '@/components/ui/AppIcon.vue';
 import AppButton from '@/components/ui/AppButton.vue';
 import AppLocalizedField from '@/components/ui/AppLocalizedField.vue';
@@ -389,7 +415,7 @@ import { todayDayNumber, toDayNumber, toIsoDate } from '@/utils/plan-dates';
 import { emptyLocalizedText } from '@/utils/screen-draft';
 import type { ContentLocale, LocalizedText } from '~~/shared/contracts/content';
 import type { ProjectMember } from '~~/shared/contracts/member';
-import type { PlanItem, PlanItemKind, PlanStage, PlanTask, PlanTaskPayload } from '~~/shared/contracts/plan';
+import type { PlanItem, PlanItemKind, PlanStage, PlanStatus, PlanTask, PlanTaskPayload } from '~~/shared/contracts/plan';
 import type { ScreenSummary } from '~~/shared/contracts/screen';
 
 const KIND_TONES = { phase: 'accent', module: 'info', feature: 'success' } as const;
@@ -408,6 +434,8 @@ const props = defineProps<{
   /** Null shows the "how to start" help and the form for a new phase. */
   item: PlanItem | null;
   stages: PlanStage[];
+  /** The project's own task statuses. */
+  statuses: PlanStatus[];
   tasks: PlanTask[];
   members: ProjectMember[];
   screens: ScreenSummary[];
@@ -433,11 +461,16 @@ const emit = defineEmits<{
   removeTask: [stageId: string];
   linkScreens: [screenCodes: string[]];
   saveNote: [note: string | null];
+  setPriority: [priority: number | null];
   /** Whether the note box holds text that is not saved yet. */
   'update:isNoteDirty': [isDirty: boolean];
 }>();
 
 const { t } = useI18n();
+const priorityOptions = computed(() => [
+  { value: null, label: t('plan.priority.none') },
+  ...[1, 2, 3, 4, 5].map((level) => ({ value: level, label: `P${level}` })),
+]);
 const focusStage = computed(() => (props.focusStageId ? (props.stages.find((stage) => stage.id === props.focusStageId) ?? null) : null));
 const localePath = useLocalePath();
 const confirm = useConfirm();

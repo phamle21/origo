@@ -4,11 +4,12 @@ import { mountSuspended } from '@nuxt/test-utils/runtime';
 import PlanItemPanel from '@/components/plan/PlanItemPanel.vue';
 import type { PlanItem } from '~~/shared/contracts/plan';
 
-const feature: PlanItem = { id: 'f', parentId: 'm', kind: 'feature', name: { vi: 'Giỏ hàng' }, note: 'Chờ giá.', position: 1, screenCodes: [] };
+const feature: PlanItem = { id: 'f', parentId: 'm', kind: 'feature', name: { vi: 'Giỏ hàng' }, note: 'Chờ giá.', position: 1, priority: null, screenCodes: [] };
 
 function mountPanel(canEdit: boolean, item: PlanItem = feature) {
   return mountSuspended(PlanItemPanel, {
     props: {
+      statuses: [],
       projectCode: 'LMS',
       item,
       stages: [],
@@ -51,14 +52,29 @@ describe('PlanItemPanel notes', () => {
 
 describe('PlanItemPanel one-stage view', () => {
   const stages = [
-    { id: 'bd', key: 'basic', name: { vi: 'Thiết kế cơ bản' }, color: '#7c3aed' },
-    { id: 'dev', key: 'dev', name: { vi: 'Phát triển' }, color: '#0f766e' },
+    { id: 'bd', key: 'basic', name: { vi: 'Thiết kế cơ bản' }, color: '#7c3aed', startDate: null, endDate: null, owner: null },
+    { id: 'dev', key: 'dev', name: { vi: 'Phát triển' }, color: '#0f766e', startDate: null, endDate: null, owner: null },
   ];
-  const tasks = [{ id: 't', itemId: 'f', stageId: 'dev', startDate: '2026-11-02', endDate: '2026-11-06', status: 'doing' as const, assigneeId: null }];
+  const tasks = [
+    {
+      id: 't',
+      itemId: 'f',
+      stageId: 'dev',
+      startDate: '2026-11-02',
+      endDate: '2026-11-06',
+      status: 'doing' as const,
+      assigneeId: null,
+      statusId: null,
+      estimateDays: null,
+      progress: null,
+      link: null,
+      note: null,
+    },
+  ];
 
   function mountFocused(focusStageId: string | null) {
     return mountSuspended(PlanItemPanel, {
-      props: { projectCode: 'LMS', item: feature, stages, tasks, members: [], screens: [], canEdit: true, language: 'vi', focusStageId },
+      props: { projectCode: 'LMS', item: feature, stages, statuses: [], tasks, members: [], screens: [], canEdit: true, language: 'vi', focusStageId },
     });
   }
 

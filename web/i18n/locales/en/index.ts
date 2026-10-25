@@ -16,6 +16,7 @@ import screen from './screen';
 import settings from './settings';
 import team from './team';
 import validation from './validation';
+import weekly from './weekly';
 
 export default {
   admin,
@@ -36,4 +37,5 @@ export default {
   settings,
   team,
   validation,
+  weekly,
 };

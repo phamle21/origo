@@ -35,8 +35,9 @@ Upload a screenshot, or let Origo capture one from an HTML/ZIP mock-up or a live
 points on it; every point carries its basic and detailed design, test cases, dependencies and impact.
 
 **🗓️ Plans**
-Phases → modules → features on a Gantt chart or a table, with your own stages (design, build, UAT…).
-Drag to reschedule, filter by owner, stage or status, and present in full screen.
+Phases → modules → features on a Gantt chart or a table, with your own stages and statuses. Track
+man-days, % done and documents per stage, see progress against working days, keep a weekly report and
+export it all into your team's own Excel project-management template, formulas intact.
 
 **💬 Collaboration**
 Comment on any point and @mention teammates; a notification bell keeps everyone in the loop.

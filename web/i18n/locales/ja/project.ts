@@ -43,6 +43,7 @@ export default {
     shortcuts: 'ショートカット',
   },
   nav: {
+    weekly: '週次報告',
     label: 'プロジェクトのセクション',
     plan: '計画',
     design: '設計',

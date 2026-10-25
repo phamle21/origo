@@ -10,7 +10,7 @@ use Origo\Core\Project\Support\LocalizedText;
 class UpdatePlanItem
 {
     /**
-     * @param  array{name?: array<string, mixed>, note?: string|null, move?: 'up'|'down'}  $data
+     * @param  array{name?: array<string, mixed>, note?: string|null, priority?: int|null, move?: 'up'|'down'}  $data
      */
     public function handle(PlanItem $item, array $data): PlanItem
     {
@@ -21,6 +21,10 @@ class UpdatePlanItem
         if (array_key_exists('note', $data)) {
             $note = trim((string) ($data['note'] ?? ''));
             $item->update(['note' => $note === '' ? null : $note]);
+        }
+
+        if (array_key_exists('priority', $data)) {
+            $item->update(['priority' => $data['priority']]);
         }
 
         if (isset($data['move'])) {

@@ -67,6 +67,12 @@
         ref="planView"
         :class="['flex min-w-0 flex-col gap-3', isFullscreen ? 'h-dvh bg-canvas p-4 text-content' : '']"
       >
+        <PlanSummaryPanel
+          v-if="plan.items.length && !isFullscreen"
+          :summary="plan.summary"
+          :stages="plan.stages"
+          :language="contentLanguage.primary"
+        />
         <div class="flex flex-wrap items-center gap-2 rounded-card border border-line bg-surface px-3 py-2 shadow-card">
           <h2
             v-if="isFullscreen"
@@ -128,6 +134,18 @@
               />
               {{ myRole ? t('plan.guide.readOnly', { role: nameOf(myRole) }) : t('plan.gantt.readOnlyHint') }}
             </p>
+            <a
+              v-if="plan.items.length"
+              :href="planExportUrl(code, contentLanguage.primary)"
+              download
+              class="inline-flex min-h-9 items-center gap-1.5 rounded-control border border-line-strong bg-surface px-3 text-sm font-semibold text-content hover:border-accent hover:text-accent-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              :title="t('plan.export.hint')"
+            >
+              <AppIcon
+                name="download"
+                :size="16"
+              />{{ t('plan.export.label') }}
+            </a>
             <button
               v-if="canFullscreen && plan.items.length"
               type="button"
@@ -143,8 +161,8 @@
               v-if="plan.canEdit"
               type="button"
               class="flex size-9 items-center justify-center rounded-control border border-line-strong bg-surface text-content-muted hover:border-accent hover:text-accent-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-              :aria-label="t('plan.stages.open')"
-              :title="t('plan.stages.open')"
+              :aria-label="t('plan.settings.open')"
+              :title="t('plan.settings.open')"
               @click="isStageDialogOpen = true"
             >
               <AppIcon name="settings" />
@@ -186,6 +204,7 @@
             ref="gantt"
             :rows="rows"
             :stages="plan.stages"
+            :statuses="plan.statuses"
             :timeline="timeline"
             :day-width="dayWidth"
             :today="today"
@@ -210,6 +229,7 @@
             :is-filling="isFullscreen"
             :rows="rows"
             :stages="plan.stages"
+            :statuses="plan.statuses"
             :selected-item-id="selectedItemId"
             :language="contentLanguage.primary"
             @select="selectItem($event)"
@@ -238,16 +258,47 @@
           v-if="plan.canEdit"
           v-model:open="isStageDialogOpen"
           icon="settings"
-          :title="t('plan.stages.title')"
-          :is-dirty="isStageDraftDirty"
+          :title="t('plan.settings.title')"
+          :is-dirty="isStageDraftDirty || isStatusDraftDirty"
         >
+          <div
+            role="tablist"
+            :aria-label="t('plan.settings.title')"
+            class="mb-4 flex rounded-control border border-line-strong bg-surface p-0.5"
+          >
+            <button
+              v-for="tab in SETTINGS_TABS"
+              :key="tab"
+              type="button"
+              role="tab"
+              :aria-selected="settingsTab === tab"
+              :class="[
+                'min-h-9 flex-1 rounded-[0.5rem] px-3 text-sm font-semibold',
+                settingsTab === tab ? 'bg-accent text-accent-contrast' : 'text-content-muted hover:text-content',
+              ]"
+              @click="settingsTab = tab"
+            >
+              {{ t(`plan.settings.tabs.${tab}`) }}
+            </button>
+          </div>
           <PlanStageEditor
+            v-show="settingsTab === 'stages'"
             v-model:is-dirty="isStageDraftDirty"
             form-id="project-stages-form"
             :stages="plan.stages"
             :task-counts="taskCountsByStage"
             :is-saving="editor.isPending.value"
+            has-windows
             @save="handleSaveStages"
+          />
+          <PlanStatusEditor
+            v-show="settingsTab === 'statuses'"
+            v-model:is-dirty="isStatusDraftDirty"
+            form-id="project-statuses-form"
+            :statuses="plan.statuses"
+            :task-counts="taskCountsByStatus"
+            :is-saving="editor.isPending.value"
+            @save="handleSaveStatuses"
           />
         </AppDialog>
       </div>
@@ -259,6 +310,7 @@
         :delete-impact="selectedImpact"
         :path="selectedPath"
         :stages="plan.stages"
+        :statuses="plan.statuses"
         :tasks="plan.tasks"
         :members="members ?? []"
         :screens="projectScreens?.screens ?? []"
@@ -274,6 +326,7 @@
         @save-task="(stageId, task) => selectedItemId && editor.run(() => savePlanTask(code, selectedItemId!, stageId, task))"
         @remove-task="handleRemoveStageOfSelected"
         @save-note="(note) => selectedItemId && editor.run(() => updatePlanItem(code, selectedItemId!, { note }))"
+        @set-priority="(priority) => selectedItemId && editor.run(() => updatePlanItem(code, selectedItemId!, { priority }))"
         @update:is-note-dirty="isNoteDirty = $event"
         @link-screens="(screenCodes) => selectedItemId && editor.run(() => linkPlanItemScreens(code, selectedItemId!, screenCodes))"
       />
@@ -291,6 +344,8 @@ import PlanGuidePopover from '@/components/plan/PlanGuidePopover.vue';
 import PlanItemPanel from '@/components/plan/PlanItemPanel.vue';
 import PlanNoteDialog from '@/components/plan/PlanNoteDialog.vue';
 import PlanStageEditor from '@/components/plan/PlanStageEditor.vue';
+import PlanStatusEditor from '@/components/plan/PlanStatusEditor.vue';
+import PlanSummaryPanel from '@/components/plan/PlanSummaryPanel.vue';
 import AppDialog from '@/components/ui/AppDialog.vue';
 import PlanStageTable from '@/components/plan/PlanStageTable.vue';
 import ProjectNav from '@/components/project/ProjectNav.vue';
@@ -298,16 +353,28 @@ import AppButton from '@/components/ui/AppButton.vue';
 import AppEmptyState from '@/components/ui/AppEmptyState.vue';
 import AppErrorNotice from '@/components/ui/AppErrorNotice.vue';
 import AppIcon from '@/components/ui/AppIcon.vue';
-import { createPlanItem, deletePlanItem, deletePlanTask, linkPlanItemScreens, savePlanStages, savePlanTask, updatePlanItem } from '@/api/plan/plan';
+import {
+  createPlanItem,
+  deletePlanItem,
+  deletePlanTask,
+  linkPlanItemScreens,
+  planExportUrl,
+  savePlanStages,
+  savePlanStatuses,
+  savePlanTask,
+  updatePlanItem,
+} from '@/api/plan/plan';
+import { statusOfTask } from '@/utils/plan-status';
 import { localizedValues, resolveLocalizedText } from '@/utils/content-language';
 import { buildTimeline, todayDayNumber, toIsoDate, type DayRange } from '@/utils/plan-dates';
 import { buildPlanRows, taskRange } from '@/utils/plan-tree';
 import { emptyPlanFilter, filterPlan, isPlanFilterActive, type PlanFilter } from '@/utils/plan-filter';
 import PlanFilterBar from '@/components/plan/PlanFilterBar.vue';
 import type { LocalizedText } from '~~/shared/contracts/content';
-import type { PlanItem, PlanItemKind, PlanStagePayload, PlanTask } from '~~/shared/contracts/plan';
+import type { PlanItem, PlanItemKind, PlanStagePayload, PlanStatusPayload, PlanTask } from '~~/shared/contracts/plan';
 
 const VIEWS = ['gantt', 'table'] as const;
+const SETTINGS_TABS = ['stages', 'statuses'] as const;
 const ZOOM_LEVELS = { narrow: 14, normal: 26, wide: 40 } as const;
 // Bounds the rendered day columns; a plan longer than this scrolls to its first three years.
 const MAX_TIMELINE_DAYS = 1_096;
@@ -381,8 +448,31 @@ useUnsavedChanges(isNoteDirty);
 
 const isStageDialogOpen = ref(false);
 const isStageDraftDirty = ref(false);
+const isStatusDraftDirty = ref(false);
+const settingsTab = ref<(typeof SETTINGS_TABS)[number]>('stages');
 
-useUnsavedChanges(computed(() => isStageDialogOpen.value && isStageDraftDirty.value));
+useUnsavedChanges(computed(() => isStageDialogOpen.value && (isStageDraftDirty.value || isStatusDraftDirty.value)));
+
+// Tasks showing each status, so the status settings say how much a status is used.
+const taskCountsByStatus = computed(() => {
+  const counts: Record<string, number> = {};
+
+  for (const task of plan.value?.tasks ?? []) {
+    const status = statusOfTask(task, plan.value?.statuses ?? []);
+
+    if (status) {
+      counts[status.id] = (counts[status.id] ?? 0) + 1;
+    }
+  }
+
+  return counts;
+});
+
+async function handleSaveStatuses(statuses: PlanStatusPayload[]): Promise<void> {
+  if (await editor.run(() => savePlanStatuses(code.value, statuses))) {
+    isStatusDraftDirty.value = false;
+  }
+}
 
 // Tasks per stage, so the stage settings say what removing a stage would delete.
 const taskCountsByStage = computed(() => {
@@ -519,7 +609,8 @@ async function handleMoveTask(task: PlanTask, range: DayRange): Promise<void> {
   const dates = { startDate: toIsoDate(range.start), endDate: toIsoDate(range.end) };
 
   pendingDates.value = new Map(pendingDates.value).set(task.id, dates);
-  await editor.run(() => savePlanTask(code.value, task.itemId, task.stageId, { ...dates, status: task.status, assigneeId: task.assigneeId }));
+  // Only the dates change; the status, effort and note stay as saved.
+  await editor.run(() => savePlanTask(code.value, task.itemId, task.stageId, { ...dates, assigneeId: task.assigneeId }));
 
   const next = new Map(pendingDates.value);
 
@@ -528,9 +619,9 @@ async function handleMoveTask(task: PlanTask, range: DayRange): Promise<void> {
 }
 
 // Right-click status change: same dates and owner, new status.
-async function handleChangeTaskStatus(task: PlanTask, status: PlanTask['status']): Promise<void> {
+async function handleChangeTaskStatus(task: PlanTask, statusId: string): Promise<void> {
   await editor.run(() =>
-    savePlanTask(code.value, task.itemId, task.stageId, { startDate: task.startDate, endDate: task.endDate, status, assigneeId: task.assigneeId }),
+    savePlanTask(code.value, task.itemId, task.stageId, { startDate: task.startDate, endDate: task.endDate, statusId, assigneeId: task.assigneeId }),
   );
 }
 

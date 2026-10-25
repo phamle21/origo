@@ -16,6 +16,8 @@ export default {
     help: 'Guide',
   },
   sectionNav: {
+    excelTemplate: 'Excel template',
+    calendar: 'Working calendar',
     myProjects: 'My projects',
     allProjects: 'All projects',
     users: 'People',

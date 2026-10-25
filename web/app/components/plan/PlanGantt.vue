@@ -284,13 +284,14 @@
       ref="menus"
       :can-edit="canEdit"
       :language="language"
+      :statuses="statuses ?? []"
       @select="emit('select', $event)"
       @select-stage="(itemId, stageId) => emit('selectStage', itemId, stageId)"
       @open-note="emit('openNote', $event)"
       @move-item-step="(itemId, direction) => emit('moveItemStep', itemId, direction)"
       @row-action="(itemId, action) => emit('rowAction', itemId, action)"
       @remove-task="emit('removeTask', $event)"
-      @change-task-status="(task, status) => emit('changeTaskStatus', task, status)"
+      @change-task-status="(task, statusId) => emit('changeTaskStatus', task, statusId)"
     />
   </div>
 </template>
@@ -304,7 +305,8 @@ import PlanDropPlaceholder from '@/components/plan/PlanDropPlaceholder.vue';
 import { usePlanRowDrag } from '@/composables/plan/usePlanRowDrag';
 import { assignLanes, isRowDone, taskRange, type PlanRow } from '@/utils/plan-tree';
 import type { ContentLocale } from '~~/shared/contracts/content';
-import type { PlanItem, PlanItemKind, PlanStage, PlanTask } from '~~/shared/contracts/plan';
+import type { PlanItem, PlanItemKind, PlanStage, PlanStatus, PlanTask } from '~~/shared/contracts/plan';
+import { statusOfTask } from '@/utils/plan-status';
 
 const LABEL_WIDTH = 288;
 const LANE_HEIGHT = 30;
@@ -332,6 +334,8 @@ interface Bar {
 const props = defineProps<{
   rows: PlanRow[];
   stages: PlanStage[];
+  /** The project's own task statuses, named in the bar tooltips and the quick menu. */
+  statuses?: PlanStatus[];
   timeline: DayRange;
   dayWidth: number;
   /** Null until mounted, so the server and the browser render the same markup. */
@@ -362,7 +366,7 @@ const emit = defineEmits<{
   /** "Remove this stage from the schedule", picked from the right-click menu on a bar. */
   removeTask: [task: PlanTask];
   /** A status picked from the right-click menu on a bar. */
-  changeTaskStatus: [task: PlanTask, status: PlanTask['status']];
+  changeTaskStatus: [task: PlanTask, statusId: string];
 }>();
 
 const { t, locale } = useI18n();
@@ -393,7 +397,11 @@ const todayOffset = computed(() =>
 );
 const gridLines = 'linear-gradient(to right, var(--app-color-line) 1px, transparent 1px)';
 
-const statusLabels = computed(() => ({ todo: t('plan.status.todo'), doing: t('plan.status.doing'), done: t('plan.status.done') }));
+function statusLabel(task: PlanTask): string {
+  const status = statusOfTask(task, props.statuses ?? []);
+
+  return status ? resolveLocalizedText(status.name, props.language).value : t(`plan.status.${task.status}`);
+}
 
 const layout = computed(() =>
   props.rows.map((row) => {
@@ -415,7 +423,7 @@ const layout = computed(() =>
           stage: stageName,
           start: formatDay(range.start),
           end: formatDay(range.end),
-          status: statusLabels.value[task.status],
+          status: statusLabel(task),
         }),
       };
     });

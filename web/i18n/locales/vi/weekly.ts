@@ -1,0 +1,33 @@
+export default {
+  title: 'Báo cáo tuần',
+  description: 'Số liệu tiến độ được chốt vào sáng thứ Hai cho tuần trước. Viết nhận xét tuần và nhập giờ làm của từng người.',
+  week: 'Tuần',
+  thisWeek: 'tuần này',
+  progress: {
+    title: 'Tiến độ theo tuần',
+    record: 'Chốt số liệu tuần này',
+    rerecord: 'Chốt lại số liệu tuần này',
+    hint: 'Mỗi tuần đã chốt giữ nguyên số liệu lúc đó, nên sửa kế hoạch về sau không làm thay đổi lịch sử.',
+    overall: 'Tổng',
+    delta: 'Tăng/giảm',
+    timeElapsed: 'Thời gian đã qua',
+    notRecorded: 'chưa chốt',
+  },
+  detail: {
+    title: 'Tuần {week}',
+    summary: 'Nhận xét trong tuần',
+    summaryHint: 'Kết quả, biến động nhân sự, yêu cầu, chất lượng. Bấm 🌐 để thêm hoặc dịch sang ngôn ngữ khác.',
+    hours: 'Giờ làm cho dự án này',
+    noMembers: 'Dự án chưa có thành viên.',
+    hoursOf: 'Giờ làm của {name}',
+    hoursUnit: 'giờ',
+    saved: 'Đã lưu',
+    noSummary: 'Tuần này chưa có nhận xét.',
+  },
+  hours: {
+    title: 'Giờ làm theo người',
+    empty: 'Chưa có giờ làm nào.',
+    member: 'Thành viên',
+    total: 'Tổng',
+  },
+};

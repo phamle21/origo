@@ -55,6 +55,10 @@ const ICON_PATHS = {
   logout: 'M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3 M10 17l-5-5 5-5 M5 12h11',
   chevronDown: 'M6 9l6 6 6-6',
   globe: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M3 12h18 M12 3a14 14 0 0 1 0 18 M12 3a14 14 0 0 0 0 18',
+  clock: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M12 7v5l3 2',
+  link: 'M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1 M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1',
+  download: 'M12 4v11 M7 10l5 5 5-5 M5 20h14',
+  report: 'M6 3h9l4 4v14H6z M14 3v5h5 M9 13h7 M9 17h5',
 } as const;
 
 export type AppIconName = keyof typeof ICON_PATHS;

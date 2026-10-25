@@ -16,6 +16,8 @@ export default {
     help: 'ガイド',
   },
   sectionNav: {
+    excelTemplate: 'Excel テンプレート',
+    calendar: '稼働カレンダー',
     myProjects: '参加プロジェクト',
     allProjects: 'すべてのプロジェクト',
     users: 'ユーザー',

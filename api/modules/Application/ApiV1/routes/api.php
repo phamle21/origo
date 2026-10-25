@@ -9,6 +9,8 @@ use Origo\Application\ApiV1\Http\Controllers\InstallController;
 use Origo\Application\ApiV1\Http\Controllers\NotificationController;
 use Origo\Application\ApiV1\Http\Controllers\PermissionController;
 use Origo\Application\ApiV1\Http\Controllers\PlanController;
+use Origo\Application\ApiV1\Http\Controllers\PlanReportController;
+use Origo\Application\ApiV1\Http\Controllers\PlanTemplateController;
 use Origo\Application\ApiV1\Http\Controllers\PointCommentController;
 use Origo\Application\ApiV1\Http\Controllers\ProfileController;
 use Origo\Application\ApiV1\Http\Controllers\ProjectController;
@@ -20,6 +22,7 @@ use Origo\Application\ApiV1\Http\Controllers\ScreenController;
 use Origo\Application\ApiV1\Http\Controllers\SettingsController;
 use Origo\Application\ApiV1\Http\Controllers\SystemRoleController;
 use Origo\Application\ApiV1\Http\Controllers\UserLookupController;
+use Origo\Application\ApiV1\Http\Controllers\WorkCalendarController;
 use Origo\Application\ApiV1\Http\Middleware\EnsureUserIsActive;
 
 // First-run install screen; both answer only while no administrator exists.
@@ -42,6 +45,7 @@ Route::patch('me', [ProfileController::class, 'update'])->name('me.update');
 Route::put('me/password', [ProfileController::class, 'password'])->middleware('throttle:6,1')->name('me.password');
 Route::get('users/lookup', UserLookupController::class)->name('users.lookup');
 Route::get('content-languages', [ContentLanguageController::class, 'index'])->name('content-languages.index');
+Route::get('work-calendar', [WorkCalendarController::class, 'index'])->name('work-calendar.index');
 Route::get('project-roles', [ProjectRoleController::class, 'index'])->name('project-roles.index');
 Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
 Route::post('notifications/read', [NotificationController::class, 'markRead'])->name('notifications.read');
@@ -60,6 +64,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::patch('system-roles/{role}', [SystemRoleController::class, 'update'])->name('system-roles.update');
     Route::delete('system-roles/{role}', [SystemRoleController::class, 'destroy'])->name('system-roles.destroy');
     Route::put('settings/stage-template', [SettingsController::class, 'saveStageTemplate'])->name('settings.stage-template.save');
+    Route::put('settings/work-calendar', [WorkCalendarController::class, 'save'])->name('settings.work-calendar.save');
+    Route::get('settings/plan-template', [PlanTemplateController::class, 'show'])->name('settings.plan-template');
+    Route::post('settings/plan-template', [PlanTemplateController::class, 'store'])->middleware('throttle:10,1')->name('settings.plan-template.store');
+    Route::get('settings/plan-template/file', [PlanTemplateController::class, 'download'])->name('settings.plan-template.file');
+    Route::delete('settings/plan-template', [PlanTemplateController::class, 'destroy'])->name('settings.plan-template.destroy');
     Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
     Route::post('users', [AdminUserController::class, 'store'])->name('users.store');
     Route::get('users/{user}', [AdminUserController::class, 'show'])->name('users.show');
@@ -96,6 +105,11 @@ Route::scopeBindings()->prefix('projects/{project:code}')->name('projects.')->gr
 Route::prefix('projects/{project:code}/plan')->name('projects.plan.')->group(function () {
     Route::get('/', [PlanController::class, 'show'])->name('show');
     Route::put('stages', [PlanController::class, 'syncStages'])->name('stages');
+    Route::put('statuses', [PlanController::class, 'syncStatuses'])->name('statuses');
+    Route::get('weekly', [PlanReportController::class, 'weekly'])->name('weekly');
+    Route::patch('weekly/{week}', [PlanReportController::class, 'updateWeek'])->name('weekly.update');
+    Route::post('weekly/{week}/record', [PlanReportController::class, 'recordWeek'])->name('weekly.record');
+    Route::get('export', [PlanReportController::class, 'export'])->middleware('throttle:20,1')->name('export');
     Route::post('items', [PlanController::class, 'storeItem'])->name('items.store');
     Route::patch('items/{item}', [PlanController::class, 'updateItem'])->name('items.update');
     Route::delete('items/{item}', [PlanController::class, 'destroyItem'])->name('items.destroy');

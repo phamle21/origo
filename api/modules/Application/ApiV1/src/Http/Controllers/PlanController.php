@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Origo\Core\Plan\Actions\CreatePlanItem;
 use Origo\Core\Plan\Actions\EnsureDefaultStages;
 use Origo\Core\Plan\Actions\LinkPlanItemScreens;
@@ -21,6 +22,8 @@ use Origo\Core\Plan\Enums\PlanTaskStatus;
 use Origo\Core\Plan\Models\PlanItem;
 use Origo\Core\Plan\Models\PlanStage;
 use Origo\Core\Plan\Models\PlanTask;
+use Origo\Core\Plan\Support\PlanStatuses;
+use Origo\Core\Plan\Support\PlanSummary;
 use Origo\Core\Project\Models\Project;
 use Origo\Core\Project\Support\LocalizedText;
 
@@ -32,11 +35,12 @@ class PlanController
 {
     public const MAX_ITEMS_PER_PROJECT = 1_000;
 
-    public function show(Request $request, Project $project, EnsureDefaultStages $ensureStages): JsonResponse
+    public function show(Request $request, Project $project, EnsureDefaultStages $ensureStages, PlanStatuses $planStatuses, PlanSummary $summary): JsonResponse
     {
         Gate::authorize('view', $project);
 
         $ensureStages->handle($project);
+        $statuses = $planStatuses->forProject($project);
         $items = PlanItem::query()->where('project_id', $project->id)->with('screens:id,code')->orderBy('position')->get();
         $tasks = PlanTask::query()->whereIn('plan_item_id', $items->pluck('id'))->get();
 
@@ -47,6 +51,15 @@ class PlanController
                 'key' => $stage->key,
                 'name' => LocalizedText::normalize($stage->name),
                 'color' => $stage->color,
+                'startDate' => $stage->start_date?->toDateString(),
+                'endDate' => $stage->end_date?->toDateString(),
+                'owner' => $stage->owner,
+            ]),
+            'statuses' => $statuses->map(fn ($status) => [
+                'id' => $status->id,
+                'name' => LocalizedText::normalize($status->name),
+                'category' => $status->category->value,
+                'color' => $status->color,
             ]),
             'items' => $items->map(fn (PlanItem $item) => [
                 'id' => $item->id,
@@ -54,6 +67,7 @@ class PlanController
                 'kind' => $item->kind->value,
                 'name' => LocalizedText::normalize($item->name),
                 'note' => $item->note,
+                'priority' => $item->priority,
                 'position' => $item->position,
                 'screenCodes' => $item->screens->pluck('code')->sort()->values(),
             ]),
@@ -64,8 +78,14 @@ class PlanController
                 'startDate' => $task->start_date->toDateString(),
                 'endDate' => $task->end_date->toDateString(),
                 'status' => $task->status->value,
+                'statusId' => $planStatuses->resolve($task, $statuses)?->id,
                 'assigneeId' => $task->assignee_id,
+                'estimateDays' => $task->estimate_days,
+                'progress' => $task->progress,
+                'link' => $task->link,
+                'note' => $task->note,
             ]),
+            'summary' => $summary->for($project),
         ]]);
     }
 
@@ -78,9 +98,35 @@ class PlanController
             'stages.*.id' => ['nullable', 'string', Rule::exists('plan_stages', 'id')->where('project_id', $project->id)],
             ...LocalizedText::rules('stages.*.name', required: true, max: 60),
             'stages.*.color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
+            'stages.*.startDate' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
+            'stages.*.endDate' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
+            'stages.*.owner' => ['sometimes', 'nullable', 'string', 'max:30'],
         ]);
 
+        foreach ($data['stages'] as $index => $stage) {
+            if (($stage['startDate'] ?? null) && ($stage['endDate'] ?? null) && $stage['endDate'] < $stage['startDate']) {
+                throw ValidationException::withMessages(["stages.{$index}.endDate" => 'The end date must not be before the start date.']);
+            }
+        }
+
         $syncStages->handle($project, $data['stages']);
+
+        return response()->noContent();
+    }
+
+    public function syncStatuses(Request $request, Project $project, PlanStatuses $statuses): Response
+    {
+        Gate::authorize('editPlan', $project);
+
+        $data = $request->validate([
+            'statuses' => ['required', 'array', 'min:3', 'max:20'],
+            'statuses.*.id' => ['nullable', 'string', Rule::exists('plan_statuses', 'id')->where('project_id', $project->id)],
+            ...LocalizedText::rules('statuses.*.name', required: true, max: 40),
+            'statuses.*.category' => ['required', Rule::enum(PlanTaskStatus::class)],
+            'statuses.*.color' => ['required', 'string', 'regex:/^#[0-9a-fA-F]{6}$/'],
+        ]);
+
+        $statuses->sync($project, $data['statuses']);
 
         return response()->noContent();
     }
@@ -112,6 +158,7 @@ class PlanController
             ...LocalizedText::rules('name', required: false, max: 160),
             'move' => ['nullable', 'in:up,down'],
             'note' => ['sometimes', 'nullable', 'string', 'max:2000'],
+            'priority' => ['sometimes', 'nullable', 'integer', 'min:1', 'max:5'],
             // Drag and drop: the new parent (null for a phase) and the index among its children.
             'position' => ['sometimes', 'integer', 'min:0', 'max:'.self::MAX_ITEMS_PER_PROJECT],
             'parentId' => ['required_with:position', 'nullable', 'string', Rule::exists('plan_items', 'id')->where('project_id', $project->id)],
@@ -147,7 +194,12 @@ class PlanController
             'startDate' => ['required', 'date_format:Y-m-d'],
             'endDate' => ['required', 'date_format:Y-m-d', 'after_or_equal:startDate'],
             'status' => ['nullable', Rule::enum(PlanTaskStatus::class)],
+            'statusId' => ['sometimes', 'nullable', 'string', 'max:40'],
             'assigneeId' => ['nullable', 'integer'],
+            'estimateDays' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:999'],
+            'progress' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:100'],
+            'link' => ['sometimes', 'nullable', 'string', 'max:2048'],
+            'note' => ['sometimes', 'nullable', 'string', 'max:2000'],
         ]);
 
         $previousAssignee = PlanTask::query()->where('plan_item_id', $item->id)->where('plan_stage_id', $stage->id)->value('assignee_id');

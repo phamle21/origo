@@ -8,7 +8,7 @@ import type {
   SystemRole,
   SystemRolePayload,
 } from '~~/shared/contracts/access';
-import type { PlanStagePayload, StageTemplateEntry } from '~~/shared/contracts/plan';
+import type { PlanExcelTemplate, PlanStagePayload, StageTemplateEntry, WorkCalendarDay } from '~~/shared/contracts/plan';
 
 export function fetchStageTemplate(): Promise<StageTemplateEntry[]> {
   return useApiClient()<StageTemplateEntry[]>('/api/settings/stage-template');
@@ -57,3 +57,33 @@ export function fetchPermissions(scope: PermissionScope): Promise<PermissionEntr
 export function updatePermission(scope: PermissionScope, permissionId: string, payload: PermissionPayload): Promise<PermissionEntry> {
   return useApiClient()<PermissionEntry>(`/api/settings/permissions/${scope}/${encodeURIComponent(permissionId)}`, { method: 'PATCH', body: payload });
 }
+
+export function fetchWorkCalendar(): Promise<WorkCalendarDay[]> {
+  return useApiClient()<WorkCalendarDay[]>('/api/work-calendar');
+}
+
+export function saveWorkCalendar(days: WorkCalendarDay[]): Promise<{ ok: true }> {
+  return useApiClient()<{ ok: true }>('/api/settings/work-calendar', { method: 'PUT', body: { days } });
+}
+
+export function fetchPlanTemplate(): Promise<PlanExcelTemplate | null> {
+  return useApiClient()<PlanExcelTemplate | null>('/api/settings/plan-template');
+}
+
+/** Uploads the team's workbook; `sheet` picks the Gantt sheet when the file holds several. */
+export function uploadPlanTemplate(file: File, sheet: string | null): Promise<PlanExcelTemplate | null> {
+  const form = new FormData();
+
+  form.append('file', file);
+  if (sheet) {
+    form.append('sheet', sheet);
+  }
+
+  return useApiClient()<PlanExcelTemplate | null>('/api/settings/plan-template', { method: 'POST', body: form });
+}
+
+export function deletePlanTemplate(): Promise<{ ok: true }> {
+  return useApiClient()<{ ok: true }>('/api/settings/plan-template', { method: 'DELETE' });
+}
+
+export const PLAN_TEMPLATE_FILE_URL = '/api/settings/plan-template/file';

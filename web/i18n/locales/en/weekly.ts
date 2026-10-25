@@ -1,0 +1,33 @@
+export default {
+  title: 'Weekly report',
+  description: 'Progress is frozen every Monday morning for the week before. Write the week’s summary and enter each member’s hours.',
+  week: 'Week',
+  thisWeek: 'this week',
+  progress: {
+    title: 'Progress by week',
+    record: 'Record this week now',
+    rerecord: 'Record this week again',
+    hint: 'Each recorded week keeps the figures of that moment, so later changes to the plan do not rewrite history.',
+    overall: 'Overall',
+    delta: 'Change',
+    timeElapsed: 'Time passed',
+    notRecorded: 'not recorded',
+  },
+  detail: {
+    title: 'Week of {week}',
+    summary: 'Summary of the week',
+    summaryHint: 'Results, changes in people, requirements and quality. Use 🌐 to add or translate other languages.',
+    hours: 'Hours worked on this project',
+    noMembers: 'The project has no members yet.',
+    hoursOf: 'Hours of {name}',
+    hoursUnit: 'h',
+    saved: 'Saved',
+    noSummary: 'No summary for this week yet.',
+  },
+  hours: {
+    title: 'Hours by member',
+    empty: 'No hours entered yet.',
+    member: 'Member',
+    total: 'Total',
+  },
+};

@@ -3,7 +3,8 @@ import { createOrigoApiClient } from '~~/server/integrations/origo-api/client';
 import { planTaskSchema } from '~~/server/utils/plan-schemas';
 import { projectCodeSchema, ulidSchema } from '~~/server/utils/route-params';
 
-const MAX_BODY_BYTES = 1_024;
+// A note and a link of their full length fit.
+const MAX_BODY_BYTES = 8 * 1_024;
 const paramsSchema = z.object({ code: projectCodeSchema, item: ulidSchema, stage: ulidSchema });
 
 export default defineApiHandler(async (event): Promise<{ ok: true }> => {

@@ -16,6 +16,23 @@ Người dùng thấy nó ở cuối menu tài khoản và dưới trang đăng 
 
 ---
 
+## Chưa phát hành (dự kiến 1.1.0)
+
+**Kế hoạch theo dõi như file quản lý dự án**
+- Mỗi lịch có thêm công dự tính (ngày công), % đã xong, link/tài liệu, ghi chú; tính năng có mức ưu tiên P1–P5.
+- Trạng thái riêng cho từng dự án (ví dụ Mới, Phân tích, Đang làm, Đang kiểm tra, Xong, Từ chối, Tạm dừng, Đang chờ), mỗi trạng thái thuộc nhóm Chưa làm / Đang làm / Xong.
+- Giai đoạn có khung thời gian và bên phụ trách (VN, JP, khách…).
+- Tổng quan tiến độ: dự tính / đã làm / còn lại theo giai đoạn và toàn dự án, thời gian đã qua theo ngày làm việc, cảnh báo chậm tiến độ và giai đoạn trễ.
+- Lịch làm việc chung (Cài đặt → Lịch làm việc): ngày nghỉ lễ và ngày làm bù.
+- Báo cáo tuần: tự chốt số liệu mỗi sáng thứ Hai (`origo:plan-weekly-snapshot`), chốt tay bất kỳ lúc nào, nhận xét tuần đa ngôn ngữ, giờ làm theo người.
+- Xuất Excel vào **chính file quản lý dự án của nhóm** (Cài đặt → Mẫu Excel): tải lên một file thật đã điền, Origo xóa dữ liệu cũ, giữ nguyên bố cục, công thức, màu, ô chọn; khi xuất chỉ điền vào các ô người ta vẫn gõ tay. Công thức Google Sheets (`__xludf.DUMMYFUNCTION`) được giữ và cập nhật kết quả lưu sẵn để mở bằng Excel vẫn đúng.
+- Khi chưa có mẫu, xuất Excel theo bố cục riêng của Origo (Gantt Chart, Weekly Report, .setting).
+- Dạng Bảng: cột tên cố định, tên dài tự xuống dòng; ô giai đoạn hiện trạng thái, công và %.
+
+**Kỹ thuật**
+- API cần thêm gói `phpoffice/phpspreadsheet`; 3 migration mới (`plan_statuses`, `work_calendar_days`, `plan_weekly_reports` + `plan_timesheet_entries`, thêm cột cho `plan_tasks`, `plan_items`, `plan_stages`).
+- Cần chạy `queue`/`scheduler` như trước; lịch chốt tuần nằm trong `routes/console.php`.
+
 ## 1.0.0 — 2026-10-24 (phát hành đầu tiên)
 
 **Dự án và thiết kế**

@@ -31,7 +31,7 @@ import AppIcon from '@/components/ui/AppIcon.vue';
 import AppSectionNav from '@/components/ui/AppSectionNav.vue';
 import { formatDisplayDate } from '@/utils/format';
 
-export type ProjectSection = 'plan' | 'design' | 'members' | 'info';
+export type ProjectSection = 'plan' | 'weekly' | 'design' | 'members' | 'info';
 
 const props = defineProps<{ projectCode: string; current: ProjectSection }>();
 
@@ -46,6 +46,7 @@ const canArchive = computed(() => Boolean(data.value?.project.permissions.canArc
 // The plan comes first because work starts there; the design (screen map) stays the project home URL.
 const sections = computed(() => [
   { id: 'plan', label: t('project.nav.plan'), icon: 'plan' as const, to: localePath(`/p/${props.projectCode}/plan`) },
+  { id: 'weekly', label: t('project.nav.weekly'), icon: 'report' as const, to: localePath(`/p/${props.projectCode}/weekly`) },
   { id: 'design', label: t('project.nav.design'), icon: 'design' as const, to: localePath(`/p/${props.projectCode}`) },
   { id: 'members', label: t('project.nav.members'), icon: 'users' as const, to: localePath(`/p/${props.projectCode}/members`) },
   { id: 'info', label: t('project.nav.info'), icon: 'info' as const, to: localePath(`/p/${props.projectCode}/info`) },

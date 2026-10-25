@@ -29,18 +29,46 @@ function steps(topic: string, list: [id: string, hasTip?: boolean][]): HelpStep[
 export const HELP_TOPICS: HelpTopic[] = [
   { id: 'start', tile: 'help', steps: steps('start', [['login', true], ['home'], ['launcher'], ['bell']]) },
   { id: 'projects', tile: 'projects', steps: steps('projects', [['list', true], ['open'], ['tabs'], ['info', true], ['archive', true]]) },
-  { id: 'plan-read', tile: 'plan', steps: steps('plan-read', [['rows'], ['legend'], ['done'], ['toolbar', true], ['filter'], ['details']]) },
+  {
+    id: 'plan-read',
+    tile: 'plan',
+    steps: steps('plan-read', [['rows'], ['legend'], ['done'], ['summary', true], ['toolbar', true], ['filter'], ['details'], ['export', true]]),
+  },
   {
     id: 'plan-edit',
     tile: 'plan',
     audience: 'editors',
-    steps: steps('plan-edit', [['move', true], ['resize'], ['status'], ['reorder'], ['row-menu'], ['note'], ['stages'], ['table']]),
+    steps: steps('plan-edit', [
+      ['move', true],
+      ['resize'],
+      ['status'],
+      ['effort', true],
+      ['reorder'],
+      ['row-menu'],
+      ['note'],
+      ['stages'],
+      ['statuses'],
+      ['table'],
+    ]),
+  },
+  {
+    id: 'weekly',
+    tile: 'plan',
+    steps: steps('weekly', [
+      ['progress', true],
+      ['week', true],
+    ]),
   },
   { id: 'design', tile: 'design', steps: steps('design', [['list'], ['pins'], ['tabs'], ['comment', true], ['delete', true]]) },
   { id: 'members', tile: 'members', audience: 'editors', steps: steps('members', [['add', true], ['role']]) },
   { id: 'languages', tile: 'settings', steps: steps('languages', [['field'], ['dialog', true]]) },
   { id: 'profile', tile: 'people', steps: steps('profile', [['menu'], ['page']]) },
-  { id: 'admin', tile: 'admin', audience: 'admins', steps: steps('admin', [['users'], ['roles'], ['project-roles'], ['permissions', true], ['languages']]) },
+  {
+    id: 'admin',
+    tile: 'admin',
+    audience: 'admins',
+    steps: steps('admin', [['users'], ['roles'], ['project-roles'], ['permissions', true], ['languages'], ['calendar', true], ['excel-template', true]]),
+  },
 ];
 
 export function findHelpTopic(id: string): HelpTopic | null {

@@ -10,16 +10,34 @@ import type { PlanItem, PlanTask } from '~~/shared/contracts/plan';
 
 const DAY_WIDTH = 20;
 const items: PlanItem[] = [
-  { id: 'phase', parentId: null, kind: 'phase', name: { vi: 'Phase 1', ja: null }, position: 0, note: null, screenCodes: [] },
-  { id: 'feature', parentId: 'phase', kind: 'feature', name: { vi: 'Đăng nhập', ja: null }, position: 0, note: null, screenCodes: [] },
+  { id: 'phase', parentId: null, kind: 'phase', name: { vi: 'Phase 1', ja: null }, position: 0, note: null, priority: null, screenCodes: [] },
+  { id: 'feature', parentId: 'phase', kind: 'feature', name: { vi: 'Đăng nhập', ja: null }, position: 0, note: null, priority: null, screenCodes: [] },
 ];
-const task: PlanTask = { id: 'task', itemId: 'feature', stageId: 'dev', startDate: '2026-10-05', endDate: '2026-10-09', status: 'doing', assigneeId: null };
+const task: PlanTask = {
+  id: 'task',
+  itemId: 'feature',
+  stageId: 'dev',
+  startDate: '2026-10-05',
+  endDate: '2026-10-09',
+  status: 'doing',
+  assigneeId: null,
+  statusId: null,
+  estimateDays: null,
+  progress: null,
+  link: null,
+  note: null,
+};
 
 async function mountGantt(canEdit = true) {
   return mountSuspended(PlanGantt, {
     props: {
       rows: buildPlanRows(items, [task]),
-      stages: [{ id: 'dev', key: 'development', name: { vi: 'Phát triển', ja: null }, color: '#0f766e' }],
+      stages: [{ id: 'dev', key: 'development', name: { vi: 'Phát triển', ja: null }, color: '#0f766e', startDate: null, endDate: null, owner: null }],
+      statuses: [
+        { id: 's-todo', name: { vi: 'Chưa làm' }, category: 'todo' as const, color: '#94a3b8' },
+        { id: 's-doing', name: { vi: 'Đang làm' }, category: 'doing' as const, color: '#2563eb' },
+        { id: 's-done', name: { vi: 'Xong' }, category: 'done' as const, color: '#16a34a' },
+      ],
       timeline: { start: toDayNumber('2026-10-01'), end: toDayNumber('2026-10-31') },
       dayWidth: DAY_WIDTH,
       today: null,
@@ -143,7 +161,7 @@ describe('PlanGantt', () => {
     options[2]?.click();
     await flushPromises();
 
-    expect(wrapper.emitted('changeTaskStatus')).toEqual([[task, 'done']]);
+    expect(wrapper.emitted('changeTaskStatus')).toEqual([[task, 's-done']]);
     expect(document.body.querySelector('[role="menu"]')).toBeNull();
     wrapper.unmount();
   });
@@ -171,7 +189,7 @@ describe('PlanGantt', () => {
     const wrapper = await mountSuspended(PlanGantt, {
       props: {
         rows: buildPlanRows(
-          [{ id: 'f', parentId: null, kind: 'feature', name: { vi: 'Đăng nhập' }, note: 'Chờ khách xác nhận.', position: 1, screenCodes: [] }],
+          [{ id: 'f', parentId: null, kind: 'feature', name: { vi: 'Đăng nhập' }, note: 'Chờ khách xác nhận.', position: 1, priority: null, screenCodes: [] }],
           [],
         ),
         stages: [],
@@ -228,7 +246,7 @@ describe('PlanGantt', () => {
     const wrapper = await mountSuspended(PlanGantt, {
       props: {
         rows: buildPlanRows(items, [{ ...task, status: 'done' }]),
-        stages: [{ id: 'dev', key: 'development', name: { vi: 'Phát triển', ja: null }, color: '#0f766e' }],
+        stages: [{ id: 'dev', key: 'development', name: { vi: 'Phát triển', ja: null }, color: '#0f766e', startDate: null, endDate: null, owner: null }],
         timeline: { start: toDayNumber('2026-10-01'), end: toDayNumber('2026-10-31') },
         dayWidth: DAY_WIDTH,
         today: null,
@@ -249,10 +267,10 @@ describe('PlanGantt', () => {
 
   describe('reordering rows', () => {
     const tree: PlanItem[] = [
-      { id: 'phase', parentId: null, kind: 'phase', name: { vi: 'Phase 1' }, position: 1, note: null, screenCodes: [] },
-      { id: 'module', parentId: 'phase', kind: 'module', name: { vi: 'Thanh toán' }, position: 1, note: null, screenCodes: [] },
-      { id: 'a', parentId: 'module', kind: 'feature', name: { vi: 'Giỏ hàng' }, position: 1, note: null, screenCodes: [] },
-      { id: 'b', parentId: 'module', kind: 'feature', name: { vi: 'Mã giảm giá' }, position: 2, note: null, screenCodes: [] },
+      { id: 'phase', parentId: null, kind: 'phase', name: { vi: 'Phase 1' }, position: 1, note: null, priority: null, screenCodes: [] },
+      { id: 'module', parentId: 'phase', kind: 'module', name: { vi: 'Thanh toán' }, position: 1, note: null, priority: null, screenCodes: [] },
+      { id: 'a', parentId: 'module', kind: 'feature', name: { vi: 'Giỏ hàng' }, position: 1, note: null, priority: null, screenCodes: [] },
+      { id: 'b', parentId: 'module', kind: 'feature', name: { vi: 'Mã giảm giá' }, position: 2, note: null, priority: null, screenCodes: [] },
     ];
 
     async function mountTree(canEdit = true) {

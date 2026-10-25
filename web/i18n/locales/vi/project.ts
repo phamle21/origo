@@ -43,6 +43,7 @@ export default {
     shortcuts: 'Lối tắt',
   },
   nav: {
+    weekly: 'Báo cáo tuần',
     label: 'Các phần của dự án',
     plan: 'Kế hoạch',
     design: 'Thiết kế',
